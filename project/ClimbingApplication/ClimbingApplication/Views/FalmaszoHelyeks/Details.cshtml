@@ -1,0 +1,54 @@
+﻿@model ClimbingApplication.Models.FalmaszoHelyek
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>FalmaszoHelyek</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.orszag)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.orszag)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.cim)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.cim)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.honlap)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.honlap)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.koordinata)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.koordinata)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.leiras)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.leiras)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Falnev)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Falnev.kep)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.ID">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

@@ -1,0 +1,47 @@
+﻿@model ClimbingApplication.Models.Falak
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Falak</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="nev" class="control-label"></label>
+                <input asp-for="nev" class="form-control" />
+                <span asp-validation-for="nev" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="kep" class="control-label"></label>
+                <input asp-for="kep" class="form-control" />
+                <span asp-validation-for="kep" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="letrehozva" class="control-label"></label>
+                <input asp-for="letrehozva" class="form-control" />
+                <span asp-validation-for="letrehozva" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FalID" class="control-label"></label>
+                <select asp-for="FalID" class ="form-control" asp-items="ViewBag.FalID"></select>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

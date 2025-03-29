@@ -1,0 +1,65 @@
+﻿@model IEnumerable<ClimbingApplication.Models.Utak>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.kep)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.nehezseg)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.nev)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.leiras)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.letrehozva)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Hozzaszolas)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.kep)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.nehezseg)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.nev)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.leiras)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.letrehozva)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Hozzaszolas.hozzaszolas)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
