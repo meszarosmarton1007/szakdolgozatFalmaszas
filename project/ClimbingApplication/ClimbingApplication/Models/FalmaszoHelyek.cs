@@ -1,0 +1,32 @@
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ClimbingApplication.Models
+{
+    public class FalmaszoHelyek
+    {
+        [Key]
+        public int ID { get; set; }
+
+        [Required]
+        public string orszag { get; set; }
+
+        [Required]
+        public string cim { get; set; }
+
+        [Required]
+        public string honlap { get; set; }
+
+        public string koordinata { get; set; }
+        
+        [Required]
+        public string leiras { get; set; }
+
+        [Required]
+        [ForeignKey("Falnev")]
+        public int FalID { get; set; }
+
+        public virtual Falak? Falnev { get; set; }
+
+    }
+}
