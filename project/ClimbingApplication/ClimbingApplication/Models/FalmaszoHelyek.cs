@@ -23,10 +23,10 @@ namespace ClimbingApplication.Models
         public string leiras { get; set; }
 
         [Required]
-        [ForeignKey("Falnev")]
-        public int FalID { get; set; }
+        [ForeignKey("Hozzaado")]
+        public int FelhasznalokID { get; set; }
 
-        public virtual Falak? Falnev { get; set; }
+        public virtual Felhasznalok? Hozzaado { get; set; }
 
     }
 }

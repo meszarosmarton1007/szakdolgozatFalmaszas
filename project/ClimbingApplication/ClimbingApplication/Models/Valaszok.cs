@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ClimbingApplication.Models
 {
@@ -9,5 +10,11 @@ namespace ClimbingApplication.Models
 
         [Required]
         public string  valasz { get; set; }
+
+        [Required]
+        [ForeignKey("Valasz")]
+        public int HozzaszolasID { get; set; }
+
+        public virtual Hozzaszolasok? Valasz { get; set; }
     }
 }

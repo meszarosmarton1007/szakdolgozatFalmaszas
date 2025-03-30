@@ -24,10 +24,10 @@ namespace ClimbingApplication.Models
         public DateOnly letrehozva { get; set; }
 
         [Required]
-        [ForeignKey("Hosszaszolas")]
-        public int HozzaszolasokID { get; set; }
+        [ForeignKey("Falonut")]
+        public int FalID { get; set; }
 
-        public virtual Hozzaszolasok? Hozzaszolas {  get; set; }
+        public virtual Falak? Falonut {  get; set; }
 
 
     }

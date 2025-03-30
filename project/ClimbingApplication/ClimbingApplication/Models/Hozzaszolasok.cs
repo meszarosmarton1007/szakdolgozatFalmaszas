@@ -12,9 +12,9 @@ namespace ClimbingApplication.Models
         public string hozzaszolas { get; set; }
 
         [Required]
-        [ForeignKey("Valsz")]
-        public int ValaszokID { get; set; }
+        [ForeignKey("UtHozzaszolas")]
+        public int UtakID { get; set; }
 
-        public virtual Hozzaszolasok? Valasz { get; set; }
+        public virtual Utak? UtHozzaszolas { get; set; }
     }
 }

@@ -30,23 +30,5 @@ namespace ClimbingApplication.Models
 
         public string rang {  get; set; }
 
-
-        [Required]
-        [ForeignKey("HelyHozzaado")]
-        public int HelyID { get; set; }
-
-        public virtual FalmaszoHelyek? HelyHozzaado { get; set; }
-
-        [Required]
-        [ForeignKey("Hozzaszolo")]
-        public int HozzaszolasokID { get; set; }
-
-        public virtual Hozzaszolasok? Hozzaszolo { get; set; }
-
-        [Required]
-        [ForeignKey("Valszolo")]
-        public int ValaszokID { get; set; }
-
-        public virtual Hozzaszolasok? Valaszolo { get; set; }
     }
 }

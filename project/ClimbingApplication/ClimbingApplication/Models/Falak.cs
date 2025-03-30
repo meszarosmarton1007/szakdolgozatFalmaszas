@@ -19,9 +19,9 @@ namespace ClimbingApplication.Models
         public DateOnly letrehozva { get; set; }
 
         [Required]
-        [ForeignKey("Falonut")]
-        public int FalID { get; set; }
+        [ForeignKey("Falhelye")]
+        public int FalmaszohelyID { get; set; }
 
-        public virtual Utak? Falonut { get; set; }
+        public virtual FalmaszoHelyek? Falhelye { get; set; }
     }
 }
