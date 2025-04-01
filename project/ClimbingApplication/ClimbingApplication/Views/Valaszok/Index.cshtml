@@ -18,6 +18,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Valasz)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Valasziro)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -29,6 +32,9 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Valasz.hozzaszolas)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Valasziro.email)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |

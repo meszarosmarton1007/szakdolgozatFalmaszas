@@ -28,5 +28,7 @@ namespace ClimbingApplication.Models
 
         public virtual Felhasznalok? Hozzaado { get; set; }
 
+        //TODO: Fal külső kulcs hozzáadása
+
     }
 }

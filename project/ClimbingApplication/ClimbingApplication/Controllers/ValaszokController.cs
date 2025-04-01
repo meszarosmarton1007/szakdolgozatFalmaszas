@@ -22,7 +22,7 @@ namespace ClimbingApplication.Controllers
         // GET: Valaszok
         public async Task<IActionResult> Index()
         {
-            var eFContextcs = _context.Valaszok.Include(v => v.Valasz);
+            var eFContextcs = _context.Valaszok.Include(v => v.Valasz).Include(v => v.Valasziro);
             return View(await eFContextcs.ToListAsync());
         }
 
@@ -36,6 +36,7 @@ namespace ClimbingApplication.Controllers
 
             var valaszok = await _context.Valaszok
                 .Include(v => v.Valasz)
+                .Include(v => v.Valasziro)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (valaszok == null)
             {
@@ -49,6 +50,7 @@ namespace ClimbingApplication.Controllers
         public IActionResult Create()
         {
             ViewData["HozzaszolasID"] = new SelectList(_context.Hozzaszolasok, "ID", "hozzaszolas");
+            ViewData["FelhasznaloID"] = new SelectList(_context.Felhasznalok, "ID", "email");
             return View();
         }
 
@@ -57,7 +59,7 @@ namespace ClimbingApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,valasz,HozzaszolasID")] Valaszok valaszok)
+        public async Task<IActionResult> Create([Bind("ID,valasz,HozzaszolasID,FelhasznaloID")] Valaszok valaszok)
         {
             if (ModelState.IsValid)
             {
@@ -66,6 +68,7 @@ namespace ClimbingApplication.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["HozzaszolasID"] = new SelectList(_context.Hozzaszolasok, "ID", "hozzaszolas", valaszok.HozzaszolasID);
+            ViewData["FelhasznaloID"] = new SelectList(_context.Felhasznalok, "ID", "email", valaszok.FelhasznaloID);
             return View(valaszok);
         }
 
@@ -83,6 +86,7 @@ namespace ClimbingApplication.Controllers
                 return NotFound();
             }
             ViewData["HozzaszolasID"] = new SelectList(_context.Hozzaszolasok, "ID", "hozzaszolas", valaszok.HozzaszolasID);
+            ViewData["FelhasznaloID"] = new SelectList(_context.Felhasznalok, "ID", "email", valaszok.FelhasznaloID);
             return View(valaszok);
         }
 
@@ -91,7 +95,7 @@ namespace ClimbingApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,valasz,HozzaszolasID")] Valaszok valaszok)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,valasz,HozzaszolasID,FelhasznaloID")] Valaszok valaszok)
         {
             if (id != valaszok.ID)
             {
@@ -119,6 +123,7 @@ namespace ClimbingApplication.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["HozzaszolasID"] = new SelectList(_context.Hozzaszolasok, "ID", "hozzaszolas", valaszok.HozzaszolasID);
+            ViewData["FelhasznaloID"] = new SelectList(_context.Felhasznalok, "ID", "email", valaszok.FelhasznaloID);
             return View(valaszok);
         }
 
@@ -132,6 +137,7 @@ namespace ClimbingApplication.Controllers
 
             var valaszok = await _context.Valaszok
                 .Include(v => v.Valasz)
+                .Include(v => v.Valasziro)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (valaszok == null)
             {
