@@ -137,27 +137,27 @@
                     function saveImage() {
                         const dataURL = canvas.toDataURL("image/png");
 
-                        fetch('/api/saveimage', {
+                        fetch('/api/feltoltes', {
                             method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
+                            headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ imageData: dataURL })
                         })
-                            .then(res => res.json())
+                            .then(async response => {
+                                if (!response.ok) {
+                                    // Válasz nem OK – olvassuk szövegként (pl. "Hiba: ...")
+                                    const text = await response.text();
+                                    throw new Error(text);
+                                }
+                                // Válasz rendben van, olvassuk JSON-ként
+                                return response.json();
+                            })
                             .then(data => {
-                                // Mutatjuk az URL-t a <div>-ben
-                                document.getElementById('result').innerHTML = `
-                                <p>Kép elérhetősége:
-                                    <a href="${data.url}" target="_blank">${data.url}</a>
-                                </p>`;
-
-                                // Kitesszük az URL-t a textboxba
-                                document.getElementById('imageUrl').value = data.url;
+                                // Siker – megjelenítjük az URL-t
+                                document.getElementById("imageUrlBox").value = data.url;
+                                alert("Kép sikeresen feltöltve!");
                             })
                             .catch(err => {
-                                console.error(err);
-                                alert('Hiba történt a kép mentésekor.');
+                                alert("Hiba történt a kép mentésekor:\n" + err.message);
                             });
                     }
                 </script>

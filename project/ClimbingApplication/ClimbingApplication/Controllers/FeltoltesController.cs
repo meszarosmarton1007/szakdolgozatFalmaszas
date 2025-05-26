@@ -16,16 +16,18 @@ namespace ClimbingApplication.Controllers
         {
             if (!firebaseInistalized)
             {
-                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "secrets", "firebase-adminsdk.json");
-                Console.WriteLine("Firebase path: " + path);
+             
+                        var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "secrets", "firebase-adminsdk.json");
 
-                FirebaseApp.Create(new AppOptions
-                {
-                    Credential = GoogleCredential.FromFile(path),
-                    ProjectId = "iotcloud2025"
-                });
-                firebaseInistalized = true;
-            }
+                        FirebaseApp.Create(new AppOptions
+                        {
+                            Credential = GoogleCredential.FromFile(path),
+                            ProjectId = "iotcloud2025"
+                        });
+                        firebaseInistalized = true;
+                    }
+           
+            
         }
         public class ImageDataRequest
         {
@@ -45,7 +47,7 @@ namespace ClimbingApplication.Controllers
                 var base64 = request.ImageData.Split(',')[1];
                 var imageBytes = Convert.FromBase64String(base64);
 
-                var imageName = $"climbingapplication/images/{Guid.NewGuid()}.png";
+                var imageName = $"images/{Guid.NewGuid()}.png";
 
                 var storage = StorageClient.Create();
                 using (var stream = new MemoryStream(imageBytes))
