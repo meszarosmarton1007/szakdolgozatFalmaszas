@@ -13,7 +13,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <button onclick="saveImage()">Kép mentése</button>
+        <button onclick="saveImage()">Fal Mentés</button>
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
@@ -77,21 +77,30 @@
 
                     // Kép mentése
                     function saveImage() {
-                        const dataURL = canvas.toDataURL({
-                            format: 'png'
-                        });
+                        const dataURL = canvas.toDataURL("image/png");
 
                         fetch('/api/saveimage', {
                             method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
                             body: JSON.stringify({ imageData: dataURL })
-                        }).then(res => {
-                            if (res.ok) {
-                                alert('Kép mentve!');
-                            } else {
-                                alert('Hiba történt a mentés során.');
-                            }
-                        });
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                // Mutatjuk az URL-t a <div>-ben
+                                document.getElementById('result').innerHTML = `
+                                <p>Kép elérhetősége:
+                                    <a href="${data.url}" target="_blank">${data.url}</a>
+                                </p>`;
+
+                                // Kitesszük az URL-t a textboxba
+                                document.getElementById('imageUrl').value = data.url;
+                            })
+                            .catch(err => {
+                                console.error(err);
+                                alert('Hiba történt a kép mentésekor.');
+                            });
                     }
                 </script>
             </div>

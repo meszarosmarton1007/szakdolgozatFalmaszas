@@ -6,6 +6,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<EFContextcs>();
 
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
