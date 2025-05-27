@@ -137,7 +137,7 @@
                     function saveImage() {
                         const dataURL = canvas.toDataURL("image/png");
 
-                        fetch('/api/feltoltes', {
+                        fetch('/api/feltoltes/saveimage', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ imageData: dataURL })
@@ -153,7 +153,7 @@
                             })
                             .then(data => {
                                 // Siker – megjelenítjük az URL-t
-                                document.getElementById("imageUrlBox").value = data.url;
+                                document.getElementById("imageUrl").value = data.url;
                                 alert("Kép sikeresen feltöltve!");
                             })
                             .catch(err => {

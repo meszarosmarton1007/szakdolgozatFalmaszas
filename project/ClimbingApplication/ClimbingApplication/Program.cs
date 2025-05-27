@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<EFContextcs>();
 
-/*var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "secrets", "firebase-adminsdk.json");
+var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "secrets", "firebase-adminsdk.json");
 
 if (FirebaseApp.DefaultInstance == null)
 {
@@ -17,7 +17,7 @@ if (FirebaseApp.DefaultInstance == null)
         Credential = GoogleCredential.FromFile(path),
         ProjectId = "iotcloud2025"
     });
-}*/
+}
 
 var app = builder.Build();
 

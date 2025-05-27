@@ -54,7 +54,7 @@
     function saveImage() {
         const dataURL = canvas.toDataURL("image/png");
 
-        fetch('/api/feltoltes', {
+        fetch('/api/feltoltes/saveimage', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ imageData: dataURL })

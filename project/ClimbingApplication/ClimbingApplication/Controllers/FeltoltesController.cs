@@ -9,60 +9,45 @@ namespace ClimbingApplication.Controllers
     [Route("api/[controller]")]
     public class FeltoltesController : ControllerBase
     {
-        private static readonly string bucketNev = "climbingapplication.appspot.com";
-        private static bool firebaseInistalized = false;
+        private readonly string bucketName = "climbingapplication.appspot.com";
+        private readonly string ProjectId = "iotcloud2025";
 
-        public FeltoltesController()
-        {
-            if (!firebaseInistalized)
-            {
-             
-                        var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "secrets", "firebase-adminsdk.json");
-
-                        FirebaseApp.Create(new AppOptions
-                        {
-                            Credential = GoogleCredential.FromFile(path),
-                            ProjectId = "iotcloud2025"
-                        });
-                        firebaseInistalized = true;
-                    }
-           
-            
-        }
-        public class ImageDataRequest
+        public class ImageUploadModel
         {
             public string ImageData { get; set; }
         }
-
-            [HttpPost]
-            public async Task<IActionResult> POST([FromBody] ImageDataRequest request)
-            {
+        [HttpPost("saveimage")]
+        public async Task<IActionResult> SaveImage([FromBody] ImageUploadModel model)
+        {
             try
             {
-
-                if (string.IsNullOrEmpty(request.ImageData))
+                if (string.IsNullOrEmpty(model.ImageData))
                 {
-                    return BadRequest("Nincs képadat.");
+                    return BadRequest("Hiányzik a kép");
                 }
-                var base64 = request.ImageData.Split(',')[1];
-                var imageBytes = Convert.FromBase64String(base64);
 
-                var imageName = $"images/{Guid.NewGuid()}.png";
+                var base64Data = model.ImageData.Contains(",") ? model.ImageData.Split(",")[1] : model.ImageData;
+
+                byte[] imageBytes = Convert.FromBase64String(base64Data);
+
+                string fileName = $"images/{Guid.NewGuid()}.png";
 
                 var storage = StorageClient.Create();
-                using (var stream = new MemoryStream(imageBytes))
-                {
-                    await storage.UploadObjectAsync(bucketNev, imageName, "image/png", stream);
-                }
 
-                var publicUrl = $"https://storage.googleapis.com/{bucketNev}/{imageName}";
-                return Ok(new { url = publicUrl });
+                using var stream = new MemoryStream(imageBytes);
+                await storage.UploadObjectAsync(bucketName, fileName, "image/png", stream, new UploadObjectOptions
+                {
+                    PredefinedAcl = PredefinedObjectAcl.PublicRead
+                });
+
+                string publicUrl = $"https://storage.googleapis.com/{bucketName}/{fileName}";
+                return Ok(new { imageUrl = publicUrl });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Hiba: {ex.Message}");
-            }
+                return StatusCode(500, $"Hiba:{ex.Message}");
             }
         }
     }
+}
 
