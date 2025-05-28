@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <Folder Include="db\" />
+    <Folder Include="wwwroot\secrets\" />
   </ItemGroup>
 
 </Project>

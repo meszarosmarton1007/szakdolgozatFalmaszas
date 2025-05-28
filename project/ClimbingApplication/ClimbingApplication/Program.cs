@@ -1,6 +1,4 @@
 using ClimbingApplication.Context;
-using FirebaseAdmin;
-using Google.Apis.Auth.OAuth2;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,16 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<EFContextcs>();
 
-var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "secrets", "firebase-adminsdk.json");
 
-if (FirebaseApp.DefaultInstance == null)
-{
-    FirebaseApp.Create(new AppOptions
-    {
-        Credential = GoogleCredential.FromFile(path),
-        ProjectId = "iotcloud2025"
-    });
-}
 
 var app = builder.Build();
 

@@ -9,8 +9,6 @@ namespace ClimbingApplication.Controllers
     [Route("api/[controller]")]
     public class FeltoltesController : ControllerBase
     {
-        private readonly string bucketName = "climbingapplication.appspot.com";
-        private readonly string ProjectId = "iotcloud2025";
 
         public class ImageUploadModel
         {
@@ -19,29 +17,30 @@ namespace ClimbingApplication.Controllers
         [HttpPost("saveimage")]
         public async Task<IActionResult> SaveImage([FromBody] ImageUploadModel model)
         {
-            try
-            {
-                if (string.IsNullOrEmpty(model.ImageData))
+            try { 
+            
+                // A kép base64 adatának dekódolása
+                var imageBytes = Convert.FromBase64String(model.ImageData.Replace("data:image/png;base64,", ""));
+
+                // Fájlnév generálása
+                var fileName = $"{Guid.NewGuid()}.png";
+
+                // Bucket neve
+                var bucketName = "rockclimbingapp";
+
+                // Firebase Storage inicializálása
+                var credential = GoogleCredential.FromFile(@"D:\_szakdolgozatFalmaszas\szakdolgozatFalmaszas\project\firebase-adminsdk.json");
+                var storage = StorageClient.Create(credential);
+
+                using (var stream = new MemoryStream(imageBytes))
                 {
-                    return BadRequest("Hiányzik a kép");
+                    await storage.UploadObjectAsync(bucketName, fileName, "image/png", stream);
                 }
 
-                var base64Data = model.ImageData.Contains(",") ? model.ImageData.Split(",")[1] : model.ImageData;
+                var publicUrl = $"https://firebasestorage.googleapis.com/v0/b/{bucketName}/o/{Uri.EscapeDataString(fileName)}?alt=media";
 
-                byte[] imageBytes = Convert.FromBase64String(base64Data);
+                return Ok(new { url = publicUrl });
 
-                string fileName = $"images/{Guid.NewGuid()}.png";
-
-                var storage = StorageClient.Create();
-
-                using var stream = new MemoryStream(imageBytes);
-                await storage.UploadObjectAsync(bucketName, fileName, "image/png", stream, new UploadObjectOptions
-                {
-                    PredefinedAcl = PredefinedObjectAcl.PublicRead
-                });
-
-                string publicUrl = $"https://storage.googleapis.com/{bucketName}/{fileName}";
-                return Ok(new { imageUrl = publicUrl });
             }
             catch (Exception ex)
             {
