@@ -48,7 +48,7 @@ namespace ClimbingApplication.Controllers
         // GET: Utak/Create
         public IActionResult Create()
         {
-            ViewData["FalID"] = new SelectList(_context.Falak, "ID", "kep");
+            ViewData["FalID"] = new SelectList(_context.Falak, "ID", "nev");//ezt változtattam
             return View();
         }
 
@@ -65,7 +65,7 @@ namespace ClimbingApplication.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FalID"] = new SelectList(_context.Falak, "ID", "kep", utak.FalID);
+            ViewData["FalID"] = new SelectList(_context.Falak, "ID", "nev", utak.FalID);
             return View(utak);
         }
 
@@ -82,7 +82,7 @@ namespace ClimbingApplication.Controllers
             {
                 return NotFound();
             }
-            ViewData["FalID"] = new SelectList(_context.Falak, "ID", "kep", utak.FalID);
+            ViewData["FalID"] = new SelectList(_context.Falak, "ID", "nev", utak.FalID);
             return View(utak);
         }
 
@@ -118,7 +118,7 @@ namespace ClimbingApplication.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FalID"] = new SelectList(_context.Falak, "ID", "kep", utak.FalID);
+            ViewData["FalID"] = new SelectList(_context.Falak, "ID", "nev", utak.FalID);
             return View(utak);
         }
 
