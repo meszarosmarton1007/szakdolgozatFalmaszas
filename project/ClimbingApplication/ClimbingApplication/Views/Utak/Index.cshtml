@@ -37,7 +37,7 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.kep)
+               <img src="@Html.DisplayFor(modelItem => item.kep)" />
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.nehezseg)
@@ -52,7 +52,7 @@
                 @Html.DisplayFor(modelItem => item.letrehozva)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Falonut.kep)
+                @Html.DisplayFor(modelItem => item.Falonut.nev)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
