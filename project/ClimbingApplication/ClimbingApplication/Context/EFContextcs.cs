@@ -5,6 +5,7 @@ namespace ClimbingApplication.Context
 {
     public class EFContextcs : DbContext
     {
+       public EFContextcs(DbContextOptions<EFContextcs> options) :  base(options){ }
         public DbSet<Felhasznalok> Felhasznalok {  get; set; }
 
         public DbSet<Falak> Falak { get; set; }
