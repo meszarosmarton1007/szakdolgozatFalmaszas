@@ -16,5 +16,13 @@ namespace ClimbingApplication.Models
         public int UtakID { get; set; }
 
         public virtual Utak? UtHozzaszolas { get; set; }
+
+        [Required]
+        [ForeignKey("UtHozzaszolo")]
+        public int FelhasznaloID { get; set; }
+
+        public virtual Felhasznalok? UtHozzaszolo { get; set; }
+
+        
     }
 }

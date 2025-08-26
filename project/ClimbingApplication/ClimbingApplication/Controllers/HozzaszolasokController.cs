@@ -22,7 +22,7 @@ namespace ClimbingApplication.Controllers
         // GET: Hozzaszolasok
         public async Task<IActionResult> Index()
         {
-            var eFContextcs = _context.Hozzaszolasok.Include(h => h.UtHozzaszolas);
+            var eFContextcs = _context.Hozzaszolasok.Include(h => h.UtHozzaszolas).Include(h => h.UtHozzaszolo);
             return View(await eFContextcs.ToListAsync());
         }
 
@@ -36,6 +36,7 @@ namespace ClimbingApplication.Controllers
 
             var hozzaszolasok = await _context.Hozzaszolasok
                 .Include(h => h.UtHozzaszolas)
+                .Include(h => h.UtHozzaszolo)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (hozzaszolasok == null)
             {
@@ -48,7 +49,8 @@ namespace ClimbingApplication.Controllers
         // GET: Hozzaszolasok/Create
         public IActionResult Create()
         {
-            ViewData["UtakID"] = new SelectList(_context.Utak, "ID", "kep");
+            ViewData["UtakID"] = new SelectList(_context.Utak, "ID", "nev");
+            ViewData["FelhasznaloID"] = new SelectList(_context.Felhasznalok, "ID", "email");
             return View();
         }
 
@@ -57,7 +59,7 @@ namespace ClimbingApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,hozzaszolas,UtakID")] Hozzaszolasok hozzaszolasok)
+        public async Task<IActionResult> Create([Bind("ID,hozzaszolas,UtakID,FelhasznaloID")] Hozzaszolasok hozzaszolasok)
         {
             if (ModelState.IsValid)
             {
@@ -65,7 +67,8 @@ namespace ClimbingApplication.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UtakID"] = new SelectList(_context.Utak, "ID", "kep", hozzaszolasok.UtakID);
+            ViewData["UtakID"] = new SelectList(_context.Utak, "ID", "nev", hozzaszolasok.UtakID);
+            ViewData["FelhasznaloID"] = new SelectList(_context.Felhasznalok, "ID", "email", hozzaszolasok.FelhasznaloID);
             return View(hozzaszolasok);
         }
 
@@ -82,7 +85,8 @@ namespace ClimbingApplication.Controllers
             {
                 return NotFound();
             }
-            ViewData["UtakID"] = new SelectList(_context.Utak, "ID", "kep", hozzaszolasok.UtakID);
+            ViewData["UtakID"] = new SelectList(_context.Utak, "ID", "nev", hozzaszolasok.UtakID);
+            ViewData["FelhasznaloID"] = new SelectList(_context.Felhasznalok, "ID", "email", hozzaszolasok.FelhasznaloID);
             return View(hozzaszolasok);
         }
 
@@ -91,7 +95,7 @@ namespace ClimbingApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,hozzaszolas,UtakID")] Hozzaszolasok hozzaszolasok)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,hozzaszolas,UtakID,FelhasznaloID")] Hozzaszolasok hozzaszolasok)
         {
             if (id != hozzaszolasok.ID)
             {
@@ -118,7 +122,8 @@ namespace ClimbingApplication.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UtakID"] = new SelectList(_context.Utak, "ID", "kep", hozzaszolasok.UtakID);
+            ViewData["UtakID"] = new SelectList(_context.Utak, "ID", "nev", hozzaszolasok.UtakID);
+            ViewData["FelhasznaloID"] = new SelectList(_context.Felhasznalok, "ID", "email", hozzaszolasok.FelhasznaloID);
             return View(hozzaszolasok);
         }
 
@@ -132,6 +137,7 @@ namespace ClimbingApplication.Controllers
 
             var hozzaszolasok = await _context.Hozzaszolasok
                 .Include(h => h.UtHozzaszolas)
+                .Include(h => h.UtHozzaszolo)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (hozzaszolasok == null)
             {

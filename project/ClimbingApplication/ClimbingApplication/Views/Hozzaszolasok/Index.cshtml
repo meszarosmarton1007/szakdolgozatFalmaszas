@@ -18,6 +18,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.UtHozzaszolas)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UtHozzaszolo)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -28,7 +31,10 @@
                 @Html.DisplayFor(modelItem => item.hozzaszolas)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.UtHozzaszolas.kep)
+               <img  src="@Html.DisplayFor(modelItem => item.UtHozzaszolas.kep)"/>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UtHozzaszolo.email)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
