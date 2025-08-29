@@ -23,6 +23,7 @@ namespace ClimbingApplication.Models
 
         public virtual Felhasznalok? UtHozzaszolo { get; set; }
 
+        public ICollection<Valaszok>? Valaszok { get; set; }
         
     }
 }

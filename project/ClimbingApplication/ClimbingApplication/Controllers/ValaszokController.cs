@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ClimbingApplication.Context;
 using ClimbingApplication.Models;
+using System.Security.Claims;
 
 namespace ClimbingApplication.Controllers
 {
@@ -70,6 +71,28 @@ namespace ClimbingApplication.Controllers
             ViewData["HozzaszolasID"] = new SelectList(_context.Hozzaszolasok, "ID", "hozzaszolas", valaszok.HozzaszolasID);
             ViewData["FelhasznaloID"] = new SelectList(_context.Felhasznalok, "ID", "email", valaszok.FelhasznaloID);
             return View(valaszok);
+        }
+
+        //Saját válasz lérehozó, hogy az utaknál lehessen
+        //létrehozni a választ a hozzászólás alatt
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> myCreate(int hozzaszolasId, string valasz)
+        {
+            var userId = int.Parse(User.FindFirstValue("userId"));
+
+            var newReply = new Valaszok
+            {
+                HozzaszolasID = hozzaszolasId,
+                FelhasznaloID = userId,
+                valasz = valasz
+            };
+
+            _context.Add(newReply);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index", "Utak");
         }
 
         // GET: Valaszok/Edit/5

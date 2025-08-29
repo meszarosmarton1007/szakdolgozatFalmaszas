@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ClimbingApplication.Context;
 using ClimbingApplication.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ClimbingApplication.Controllers
 {
@@ -22,8 +23,15 @@ namespace ClimbingApplication.Controllers
         // GET: Utak
         public async Task<IActionResult> Index()
         {
-            var eFContextcs = _context.Utak.Include(u => u.Falonut);
+            var eFContextcs = _context.Utak
+                .Include(u => u.Falonut)
+                .Include(u => u.Hozzaszolasoks)
+                    .ThenInclude(h => h.UtHozzaszolo)
+                .Include(u => u.Hozzaszolasoks)
+                    .ThenInclude(h => h.Valaszok)
+                        .ThenInclude(v => v.Valasziro);
             return View(await eFContextcs.ToListAsync());
+
         }
 
         // GET: Utak/Details/5

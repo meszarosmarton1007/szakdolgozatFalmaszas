@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ClimbingApplication.Context;
 using ClimbingApplication.Models;
+using System.Security.Claims;
 
 namespace ClimbingApplication.Controllers
 {
@@ -71,6 +72,28 @@ namespace ClimbingApplication.Controllers
             ViewData["FelhasznaloID"] = new SelectList(_context.Felhasznalok, "ID", "email", hozzaszolasok.FelhasznaloID);
             return View(hozzaszolasok);
         }
+
+        //Sajat create létrehozás ahhoz, hogy a hozzászólások
+        //megfelelő helyen a megfelő módon legenek megjelenítve és létrehozva
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> myCreate(int utakId, string hozzaszolas)
+        {
+            var userId = int.Parse(User.FindFirstValue("UserId"));
+            var newComment = new Hozzaszolasok
+            {
+                UtakID = utakId,
+                FelhasznaloID = userId,
+                hozzaszolas = hozzaszolas
+            };
+
+            _context.Add(newComment);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index", "Utak");
+        }
+
+
 
         // GET: Hozzaszolasok/Edit/5
         public async Task<IActionResult> Edit(int? id)
