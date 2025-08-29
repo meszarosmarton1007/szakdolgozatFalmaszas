@@ -95,6 +95,54 @@ namespace ClimbingApplication.Controllers
             return RedirectToAction("Index", "Utak");
         }
 
+        //Saját válsz szerkesztése az utaknál valamit az admin mindent tud szerkeszteni
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> myEdit(int id, string valasz)
+        {
+            var repy = await _context.Valaszok.FindAsync(id);
+            if (repy == null)
+            {
+                return NotFound();
+            }
+
+            var userId = int.Parse(User.FindFirstValue("UserId"));
+
+            if(repy.FelhasznaloID == userId || User.IsInRole("admin"))
+            {
+                repy.valasz = valasz;
+                _context.Update(repy);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction("Index", "Utak");
+        }
+
+        //saját válasz törlése valamint az admin mindent tud törölni
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> myDelete(int id)
+        {
+            var repy = await _context.Valaszok.FindAsync(id);
+
+            if(repy == null)
+            {
+                return NotFound();
+            }
+
+            var userId = int.Parse(User.FindFirstValue("UserId"));
+
+            if(repy.FelhasznaloID == userId || User.IsInRole("admin"))
+            {
+                _context.Valaszok.Remove(repy);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction("Index", "Utak");
+        }
+
         // GET: Valaszok/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {

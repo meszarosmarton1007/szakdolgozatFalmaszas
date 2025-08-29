@@ -29,6 +29,8 @@ namespace ClimbingApplication.Models
 
         public virtual Falak? Falonut {  get; set; }
 
+    
+
         public ICollection<Hozzaszolasok>? Hozzaszolasoks { get; set; }
 
         //public ICollection<Valaszok> Valaszoks { get; set; }

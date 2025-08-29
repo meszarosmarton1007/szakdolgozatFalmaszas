@@ -72,6 +72,22 @@
                                     <strong> @hozzaszolas.UtHozzaszolo?.email:</strong>
                                     <p>@hozzaszolas.hozzaszolas</p>
 
+                                    @if (User.Identity.IsAuthenticated &&
+                                   (hozzaszolas.FelhasznaloID == int.Parse(User.FindFirstValue("UserId")) || User.IsInRole("admin")))
+                                    {
+                                        <!-- Szeksztés itt-->
+                                        <form asp-controller="Hozzaszolasok" asp-action="myEdit" method="post" class="d-inline">
+                                            <input type="hidden" name="id" value="@hozzaszolas.ID" />
+                                            <input type="text" name="hozzaszolas" value="@hozzaszolas.hozzaszolas" class="form-control d-inline w-50" />
+                                            <button type="submit" class="btn btn-sm btn-warning">Mentés</button>
+                                        </form>
+
+                                        <!--Törlés itt-->
+                                        <form asp-controller="Hozzaszolasok" asp-action="myDelete" method="post" class="d-inline">
+                                            <input type="hidden" name="id" value="@hozzaszolas.ID" />
+                                            <button type="submit" class="btn btn-sm btn-danger">Törlés</button>
+                                        </form>
+                                    }
 
                                     <!--Válaszok itt lesznek-->
                                     @if(hozzaszolas.Valaszok != null && hozzaszolas.Valaszok.Any())
@@ -83,7 +99,24 @@
                                                 <strong>@valaszok.Valasziro?.email</strong>
                                                 <p>@valaszok.valasz</p>
                                                 </div>
-                                            }
+
+                                                @if (User.Identity.IsAuthenticated && (valaszok.FelhasznaloID == int.Parse(User.FindFirstValue("UserId")) || User.IsInRole("admin")))
+                                                {
+                                                    <!--Szekeszési rész-->
+                                                    <form asp-asp-controller="Valaszok" asp-action="myEdit" method="post" class="d-inline">
+                                                        <input type="hidden" name="id" value="@valaszok.ID" />
+                                                        <input type="text" name="valasz" value="@valaszok.valasz" class=" form-control d-inline w-50" />
+                                                        <button type="submit" class="btn btn-sm btn-warning">Mentés</button>
+                                                    </form>
+
+                                                    <!--Törlési rész-->
+                                                    <form asp-asp-controller="Valaszok" asp-action="myDelete" method="post" class="d-inline">
+                                                        <input type="hidden" name="id" value="@valaszok.ID" />
+                                                        <button type="submit" class="btn btn-sm btn-danger">Törlés</button>
+                                                    </form>
+                                                }
+                                                
+                            }
                                          </div>   
                                     }
                                         <!--Új válasz írása-->
