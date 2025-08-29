@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using ClimbingApplication.Context;
 using ClimbingApplication.Models;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace ClimbingApplication.Controllers
 {
@@ -24,12 +25,13 @@ namespace ClimbingApplication.Controllers
         public async Task<IActionResult> Index()
         {
             var eFContextcs = _context.Utak
-                .Include(u => u.Falonut)
-                .Include(u => u.Hozzaszolasoks)
-                    .ThenInclude(h => h.UtHozzaszolo)
-                .Include(u => u.Hozzaszolasoks)
-                    .ThenInclude(h => h.Valaszok)
-                        .ThenInclude(v => v.Valasziro);
+                .Include(u => u.Falonut)                //Falnak a neve
+                .Include(u => u.UtLetrehozo)            //A mászó aki létrehozta
+                .Include(u => u.Hozzaszolasoks)         //hozzászólás betöltése
+                    .ThenInclude(h => h.UtHozzaszolo)   //aki a hozzászólást írta
+                .Include(u => u.Hozzaszolasoks)         
+                    .ThenInclude(h => h.Valaszok)       //válaszok betöltése
+                        .ThenInclude(v => v.Valasziro); //a válasznak az írója
             return View(await eFContextcs.ToListAsync());
 
         }
@@ -44,6 +46,7 @@ namespace ClimbingApplication.Controllers
 
             var utak = await _context.Utak
                 .Include(u => u.Falonut)
+                .Include(U => U.UtLetrehozo)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (utak == null)
             {
@@ -69,6 +72,15 @@ namespace ClimbingApplication.Controllers
         {
             if (ModelState.IsValid)
             {
+                var userIdStr = User.FindFirstValue("userId");
+
+                if (string.IsNullOrEmpty(userIdStr))
+                {
+                    return Unauthorized();
+                }
+
+                utak.FelhasznaloID = int.Parse(userIdStr);
+
                 _context.Add(utak);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -140,6 +152,7 @@ namespace ClimbingApplication.Controllers
 
             var utak = await _context.Utak
                 .Include(u => u.Falonut)
+                .Include(u => u.UtLetrehozo)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (utak == null)
             {

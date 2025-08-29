@@ -47,6 +47,12 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Falonut.kep)
         </dd>
+        <dt class="col-sm-2">
+            Létrehozó
+        </dt>
+        <dd class="col-sm-10">
+            @Model.UtLetrehozo?.email
+        </dd>
     </dl>
     
     <form asp-action="Delete">

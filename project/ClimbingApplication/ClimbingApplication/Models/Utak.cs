@@ -29,7 +29,12 @@ namespace ClimbingApplication.Models
 
         public virtual Falak? Falonut {  get; set; }
 
-    
+        //létehozó
+        [Required]
+        [ForeignKey("UtLetrehozo")]
+        public int FelhasznaloID { get; set; }
+
+        public virtual Felhasznalok? UtLetrehozo { get; set; }
 
         public ICollection<Hozzaszolasok>? Hozzaszolasoks { get; set; }
 
