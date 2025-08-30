@@ -35,7 +35,7 @@ namespace ClimbingApplication.Controllers
 
             if (user == null)
             {
-                ModelState.AddModelError("", "Hibás email vagy jelszó");
+                ModelState.AddModelError("jelszo", "Hibás email vagy jelszó");
                 return View(model);
             }
 

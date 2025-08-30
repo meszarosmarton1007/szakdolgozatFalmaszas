@@ -24,7 +24,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Falhelye)
             </th>
-            <th></th>
+            <th>
+                @Html.DisplayNameFor(model => model.Letrehozo)
+            </th>
         </tr>
     </thead>
     <tbody>
@@ -41,6 +43,9 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Falhelye.cim)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Letrehozo.felhasznaloNev)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |

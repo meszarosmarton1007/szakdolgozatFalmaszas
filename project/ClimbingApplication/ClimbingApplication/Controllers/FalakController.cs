@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ClimbingApplication.Context;
 using ClimbingApplication.Models;
+using System.Security.Claims;
 
 namespace ClimbingApplication.Controllers
 {
@@ -22,7 +23,9 @@ namespace ClimbingApplication.Controllers
         // GET: Falak
         public async Task<IActionResult> Index()
         {
-            var eFContextcs = _context.Falak.Include(f => f.Falhelye);
+            var eFContextcs = _context.Falak
+                .Include(f => f.Falhelye)
+                .Include(f => f.Letrehozo);
             return View(await eFContextcs.ToListAsync());
         }
 
@@ -61,6 +64,15 @@ namespace ClimbingApplication.Controllers
         {
             if (ModelState.IsValid)
             {
+                var userIdStr = User.FindFirstValue("userId");
+
+                if (string.IsNullOrEmpty(userIdStr))
+                {
+                    return Unauthorized();
+                }
+
+                falak.FelhasznaloID = int.Parse(userIdStr);
+
                 _context.Add(falak);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
