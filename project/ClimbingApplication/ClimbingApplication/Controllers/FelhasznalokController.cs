@@ -54,8 +54,13 @@ namespace ClimbingApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,vezetekNev,keresztNev,email,jelszo,szuletesiIdo,telefonszam,rang")] Felhasznalok felhasznalok)
+        public async Task<IActionResult> Create([Bind("ID,vezetekNev,keresztNev,email,jelszo,szuletesiIdo,telefonszam,rang,felhasznaloNev")] Felhasznalok felhasznalok)
         {
+            if(_context.Felhasznalok.Any(f => f.felhasznaloNev == felhasznalok.felhasznaloNev))
+            {
+                ModelState.AddModelError("felhasznaloNev", "Ez a név már foglalt! Kérem adj meg egy másik felhasználónevet!");
+            }
+            
             if (ModelState.IsValid)
             {
                 _context.Add(felhasznalok);
@@ -86,8 +91,14 @@ namespace ClimbingApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,vezetekNev,keresztNev,email,jelszo,szuletesiIdo,telefonszam,rang")] Felhasznalok felhasznalok)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,vezetekNev,keresztNev,email,jelszo,szuletesiIdo,telefonszam,rang,felhasznaloNev")] Felhasznalok felhasznalok)
         {
+            if (_context.Felhasznalok.Any(f => f.felhasznaloNev == felhasznalok.felhasznaloNev && f.ID != felhasznalok.ID))
+            {
+                ModelState.AddModelError("felhasznalonev", "Ez a név már foglalt! Kérem adj meg egy másik felhasználónevet!");
+            }
+            
+            
             if (id != felhasznalok.ID)
             {
                 return NotFound();

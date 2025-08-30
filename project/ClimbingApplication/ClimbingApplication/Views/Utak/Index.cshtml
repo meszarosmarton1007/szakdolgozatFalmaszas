@@ -75,7 +75,7 @@
                             {
                              
                                 <div class="border p-2 my-2">
-                                    <strong> @hozzaszolas.UtHozzaszolo?.email:</strong>
+                                    <strong> @hozzaszolas.UtHozzaszolo?.felhasznaloNev</strong>
                                     <p>@hozzaszolas.hozzaszolas</p>
 
                                     @if (User.Identity.IsAuthenticated &&
@@ -102,7 +102,7 @@
                                             @foreach(var valaszok in hozzaszolas.Valaszok)
                                             {
                                                 <div class="border-start ps-2 my-1">
-                                                <strong>@valaszok.Valasziro?.email</strong>
+                                                <strong>@valaszok.Valasziro?.felhasznaloNev</strong>
                                                 <p>@valaszok.valasz</p>
                                                 </div>
 

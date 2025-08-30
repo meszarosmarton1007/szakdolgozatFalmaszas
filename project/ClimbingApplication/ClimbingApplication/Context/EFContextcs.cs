@@ -22,5 +22,14 @@ namespace ClimbingApplication.Context
         {
             optionsBuilder.UseSqlite("Data Source=.\\db\\database.db");
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Felhasznalok>()
+                .HasIndex(f => f.felhasznaloNev)
+                .IsUnique();
+        }
     }
 }

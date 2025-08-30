@@ -30,5 +30,7 @@ namespace ClimbingApplication.Models
 
         public string rang {  get; set; }
 
+        [Required]
+        public string felhasznaloNev { get; set; }
     }
 }

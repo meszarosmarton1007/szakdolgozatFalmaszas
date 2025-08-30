@@ -49,7 +49,7 @@
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">
-                                <span class="navbar-text me-2">Szia, @User.Identity.Name!</span>
+                                <span class="navbar-text me-2">Szia, @User.Identity.Name !</span>
                                 <form asp-controller="Account" asp-action="Logout" method="post">
                                     @Html.AntiForgeryToken()
                                     <button type="submit" class="btn btn-link nav-link">Kijelentkezés</button>
