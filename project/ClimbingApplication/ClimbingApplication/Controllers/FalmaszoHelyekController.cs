@@ -7,12 +7,15 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ClimbingApplication.Context;
 using ClimbingApplication.Models;
+using System.Security.Claims;
 
 namespace ClimbingApplication.Controllers
 {
     public class FalmaszoHelyekController : Controller
     {
         private readonly EFContextcs _context;
+
+        
 
         public FalmaszoHelyekController(EFContextcs context)
         {
@@ -22,7 +25,9 @@ namespace ClimbingApplication.Controllers
         // GET: FalmaszoHelyek
         public async Task<IActionResult> Index()
         {
-            var eFContextcs = _context.FalmaszoHelyek.Include(f => f.Hozzaado);
+            var eFContextcs = _context.FalmaszoHelyek
+                .Include(f => f.Hozzaado)
+                .Include(f => f.Falak);
             return View(await eFContextcs.ToListAsync());
         }
 
@@ -61,6 +66,15 @@ namespace ClimbingApplication.Controllers
         {
             if (ModelState.IsValid)
             {
+                var userIdStr = User.FindFirstValue("userId");
+
+                if (string.IsNullOrEmpty(userIdStr))
+                {
+                    return Unauthorized();
+                }
+
+                falmaszoHelyek.FelhasznalokID = int.Parse(userIdStr);
+
                 _context.Add(falmaszoHelyek);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

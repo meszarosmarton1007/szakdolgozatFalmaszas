@@ -30,7 +30,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Hozzaado)
             </th>
-            <th></th>
+            <th>
+                Falak
+            </th>
         </tr>
     </thead>
     <tbody>
@@ -52,7 +54,12 @@
                 @Html.DisplayFor(modelItem => item.leiras)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Hozzaado.email)
+                @Html.DisplayFor(modelItem => item.Hozzaado.felhasznaloNev)
+            </td>
+            <td>
+                   <a asp-controller="Falak" asp-action="Index" asp-route-falmaszoHelyId="@item.ID">
+                       A teremben található falak
+                   </a>
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |

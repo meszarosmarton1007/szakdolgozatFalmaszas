@@ -4,6 +4,7 @@
     var falNev = ViewData["FalNev"] as string;
     var falId = ViewData["FalID"];
 
+
 }
 <h2>
     @if (!string.IsNullOrEmpty(falNev))
@@ -84,9 +85,9 @@ else
                     @Html.DisplayFor(modelItem => item.UtLetrehozo.email)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                <a asp-controller="Utak" asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
+                <a asp-controller="Utak" asp-action="Details" asp-route-id="@item.ID">Details</a> |
+                <a asp-controller="Utak" asp-action="Delete" asp-route-id="@item.ID">Delete</a>
             </td>
         </tr>
         <tr>

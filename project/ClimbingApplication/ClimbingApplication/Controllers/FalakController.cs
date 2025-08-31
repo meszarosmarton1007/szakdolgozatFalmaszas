@@ -21,12 +21,33 @@ namespace ClimbingApplication.Controllers
         }
 
         // GET: Falak
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? falmaszohelyId)
         {
-            var eFContextcs = _context.Falak
-                .Include(f => f.Falhelye)
-                .Include(f => f.Letrehozo);
-            return View(await eFContextcs.ToListAsync());
+
+            IQueryable<Falak> query = _context.Falak.Include(f => f.Falhelye).Include(f => f.Letrehozo);
+
+            if (falmaszohelyId.HasValue)
+            {
+                query = query.Where(f => f.FalmaszohelyID == falmaszohelyId);   
+                ViewBag.FalmaszohelyId = falmaszohelyId.Value;
+            }
+            return View(await query.ToListAsync());
+            
+            // var falak = _context.Falak.Include(f => f.Falhelye).Include(f => f.Letrehozo);
+
+           // if (falmaszohelyId.HasValue)
+            //{
+              //  var szurtFalak = falak.Where(f => f.FalmaszohelyID == falmaszohelyId.Value);
+              //  return View(await szurtFalak.ToListAsync());
+            //}
+
+           // return View(await falak.ToListAsync());
+
+            
+           // var eFContextcs = _context.Falak
+           //     .Include(f => f.Falhelye)
+           //     .Include(f => f.Letrehozo);
+          //  return View(await eFContextcs.ToListAsync());
         }
 
         // GET: Falak/Details/5
@@ -49,10 +70,19 @@ namespace ClimbingApplication.Controllers
         }
 
         // GET: Falak/Create
-        public IActionResult Create()
+        public IActionResult Create(int falmaszoHelyId)
         {
-            ViewData["FalmaszohelyID"] = new SelectList(_context.FalmaszoHelyek, "ID", "cim");
-            return View();
+            //ViewData["FalmaszohelyID"] = new SelectList(_context.FalmaszoHelyek, "ID", "cim");
+            //return View();
+
+            var fal = new Falak
+            {
+                FalmaszohelyID = falmaszoHelyId,
+                letrehozva = DateOnly.FromDateTime(DateTime.Now)
+
+            };
+
+            return View(fal);
         }
 
         // POST: Falak/Create
@@ -60,7 +90,7 @@ namespace ClimbingApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,nev,kep,letrehozva,FalmaszohelyID")] Falak falak)
+        public async Task<IActionResult> Create([Bind("ID,nev,kep,letrehozva,FalmaszohelyID")] Falak falak, int falmaszoHelyId)
         {
             if (ModelState.IsValid)
             {
@@ -72,10 +102,11 @@ namespace ClimbingApplication.Controllers
                 }
 
                 falak.FelhasznaloID = int.Parse(userIdStr);
+                falak.FalmaszohelyID = falmaszoHelyId;
 
                 _context.Add(falak);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new {falmaszoHelyId = falak.FalmaszohelyID});
             }
             ViewData["FalmaszohelyID"] = new SelectList(_context.FalmaszoHelyek, "ID", "cim", falak.FalmaszohelyID);
             return View(falak);
@@ -89,12 +120,15 @@ namespace ClimbingApplication.Controllers
                 return NotFound();
             }
 
-            var falak = await _context.Falak.FindAsync(id);
+            var falak = await _context.Falak
+                .Include(f => f.Falhelye)
+                .Include(f => f.Letrehozo)
+                .FirstOrDefaultAsync(f => f.ID == id);
             if (falak == null)
             {
                 return NotFound();
             }
-            ViewData["FalmaszohelyID"] = new SelectList(_context.FalmaszoHelyek, "ID", "cim", falak.FalmaszohelyID);
+            //ViewData["FalmaszohelyID"] = new SelectList(_context.FalmaszoHelyek, "ID", "cim", falak.FalmaszohelyID);
             return View(falak);
         }
 
@@ -114,6 +148,17 @@ namespace ClimbingApplication.Controllers
             {
                 try
                 {
+                    var existingFal = await _context.Falak
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync(f => f.ID == id);
+
+                    if (existingFal == null)
+                    {
+                        return NotFound();
+                    }
+                     falak.FalmaszohelyID = existingFal.FalmaszohelyID;
+                    falak.FelhasznaloID = existingFal.FelhasznaloID;
+
                     _context.Update(falak);
                     await _context.SaveChangesAsync();
                 }
@@ -128,9 +173,9 @@ namespace ClimbingApplication.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new {falmaszohelyId = falak.FalmaszohelyID});
             }
-            ViewData["FalmaszohelyID"] = new SelectList(_context.FalmaszoHelyek, "ID", "cim", falak.FalmaszohelyID);
+            //ViewData["FalmaszohelyID"] = new SelectList(_context.FalmaszoHelyek, "ID", "cim", falak.FalmaszohelyID);
             return View(falak);
         }
 
@@ -188,12 +233,17 @@ namespace ClimbingApplication.Controllers
             var utak = await _context.Utak
                 .Include(u => u.Falonut)
                 .Include(u => u.UtLetrehozo)
+                .Include(u =>u.Hozzaszolasoks)
+                .ThenInclude(k => k.UtHozzaszolo)
+                .Include(u => u.Hozzaszolasoks)
+                .ThenInclude(k => k.Valaszok)
+                .ThenInclude(v => v.Valasziro)
                 .Where(u => u.FalID == id)
                 .ToListAsync();
 
             ViewData["FalNev"] = fal.nev;
             ViewData["FalID"] = fal.ID;
-
+            
             return View("../Utak/Index", utak);
         }
     }

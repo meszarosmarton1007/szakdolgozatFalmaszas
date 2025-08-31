@@ -94,9 +94,9 @@ namespace ClimbingApplication.Controllers
 
                 _context.Add(utak);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new {falId = falId});
             }
-            ViewData["FalID"] = new SelectList(_context.Falak, "ID", "nev", utak.FalID);
+           // ViewData["FalID"] = new SelectList(_context.Falak, "ID", "nev", utak.FalID);
             return View(utak);
         }
 
@@ -108,12 +108,15 @@ namespace ClimbingApplication.Controllers
                 return NotFound();
             }
 
-            var utak = await _context.Utak.FindAsync(id);
+            var utak = await _context.Utak
+                .Include(u => u.Falonut)
+                .Include(u => u.UtLetrehozo)
+                .FirstOrDefaultAsync(u => u.ID == id);
             if (utak == null)
             {
                 return NotFound();
             }
-            ViewData["FalID"] = new SelectList(_context.Falak, "ID", "nev", utak.FalID);
+            //ViewData["FalID"] = new SelectList(_context.Falak, "ID", "nev", utak.FalID);
             return View(utak);
         }
 
@@ -133,6 +136,19 @@ namespace ClimbingApplication.Controllers
             {
                 try
                 {
+                    var existingUt = await _context.Utak
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync(u => u.ID == id);
+
+                    if (existingUt == null)
+                    {
+                        return NotFound();
+                    }
+
+                    utak.FalID = existingUt.FalID;
+                    utak.FelhasznaloID = existingUt.FelhasznaloID;
+                    
+
                     _context.Update(utak);
                     await _context.SaveChangesAsync();
                 }
@@ -147,9 +163,9 @@ namespace ClimbingApplication.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new {falId = utak.FalID});
             }
-            ViewData["FalID"] = new SelectList(_context.Falak, "ID", "nev", utak.FalID);
+            //ViewData["FalID"] = new SelectList(_context.Falak, "ID", "nev", utak.FalID);
             return View(utak);
         }
 

@@ -175,10 +175,13 @@
                 <span asp-validation-for="letrehozva" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="FalID" class="control-label"></label>
-                <select asp-for="FalID" class="form-control" asp-items="ViewBag.FalID"></select>
-                <span asp-validation-for="FalID" class="text-danger"></span>
+               <label>Falon van</label>
+               <input class="form-control" value="@Model.Falonut?.nev" disabled />
             </div>
+                <div class="form-group">
+                    <label>Létrehozó</label>
+                    <input class="form-control" value="@Model.UtLetrehozo?.felhasznaloNev" disabled />
+                </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>

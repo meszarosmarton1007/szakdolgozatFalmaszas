@@ -28,7 +28,9 @@ namespace ClimbingApplication.Models
 
         public virtual Felhasznalok? Hozzaado { get; set; }
 
-        
+
+        public virtual ICollection<Falak> Falak { get; set; } = new List<Falak>();
+
 
     }
 }

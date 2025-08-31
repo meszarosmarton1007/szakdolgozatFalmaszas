@@ -2,9 +2,18 @@
 
 @{
     ViewData["Title"] = "Index";
+    var falmaszohelyId = ViewData["FalmaszohelyID"];
 }
 
-<h1>Index</h1>
+<h1>Falak</h1>
+@if(ViewBag.FalmaszohelyId != null)
+{
+    <p>
+        <a asp-controller="Falak" asp-action="Create" asp-route-falmaszohelyId="@falmaszohelyId">
+            Új fal létrehozása
+        </a>
+    </p>
+}
 
 <p>
     <a asp-action="Create">Create New</a>

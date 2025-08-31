@@ -45,18 +45,18 @@
                                 });
 
                                 // új háttér betöltés = új állapot
-                                saveState();
+                                //saveState();
                             });
                         };
                         reader.readAsDataURL(e.target.files[0]);
                     });
 
-                    canvas.on('path:created', function () {
+                   /* canvas.on('path:created', function () {
                         saveState();
-                    });
+                    });*/
 
                     // Kezdő állapot mentése
-                    saveState();
+                   // saveState();
 
 
 
@@ -110,8 +110,9 @@
                 <span asp-validation-for="letrehozva" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="FalmaszohelyID" class="control-label"></label>
-                <select asp-for="FalmaszohelyID" class ="form-control" asp-items="ViewBag.FalmaszohelyID"></select>
+               <!-- <label asp-for="FalmaszohelyID" class="control-label"></label>-->
+               <!-- <select asp-for="FalmaszohelyID" class ="form-control" asp-items="ViewBag.FalmaszohelyID"></select>-->
+               <input type="hidden" asp-for="FalmaszohelyID" />
             </div>
             <div class="form-group">
                 
