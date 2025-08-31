@@ -172,5 +172,29 @@ namespace ClimbingApplication.Controllers
         {
             return _context.Falak.Any(e => e.ID == id);
         }
+
+        //utak listázása falak alapján
+        public async Task<IActionResult> Utak(int id)
+        {
+            var fal = await _context.Falak
+                .Include(f => f.Falhelye)
+                .FirstOrDefaultAsync(f => f.ID == id);
+
+            if (fal == null)
+            {
+                return NotFound();
+            }
+
+            var utak = await _context.Utak
+                .Include(u => u.Falonut)
+                .Include(u => u.UtLetrehozo)
+                .Where(u => u.FalID == id)
+                .ToListAsync();
+
+            ViewData["FalNev"] = fal.nev;
+            ViewData["FalID"] = fal.ID;
+
+            return View("../Utak/Index", utak);
+        }
     }
 }

@@ -57,9 +57,16 @@ namespace ClimbingApplication.Controllers
         }
 
         // GET: Utak/Create
-        public IActionResult Create()
+        public IActionResult Create(int? falId)
         {
-            ViewData["FalID"] = new SelectList(_context.Falak, "ID", "nev");//ezt változtattam
+            if (falId.HasValue)
+            {
+                ViewData["FalID"] = falId; //new SelectList(_context.Falak, "ID", "nev");//ezt változtattam
+            }
+            else
+            {
+                ViewData["FalID"] = new SelectList(_context.Falak, "ID", "nev");
+            }
             return View();
         }
 
@@ -68,7 +75,7 @@ namespace ClimbingApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,kep,nehezseg,nev,leiras,letrehozva,FalID")] Utak utak)
+        public async Task<IActionResult> Create([Bind("ID,kep,nehezseg,nev,leiras,letrehozva,FalID")] Utak utak, int? falId)
         {
             if (ModelState.IsValid)
             {
@@ -80,6 +87,10 @@ namespace ClimbingApplication.Controllers
                 }
 
                 utak.FelhasznaloID = int.Parse(userIdStr);
+                if (falId.HasValue)
+                {
+                    utak.FalID = falId.Value;
+                }
 
                 _context.Add(utak);
                 await _context.SaveChangesAsync();
