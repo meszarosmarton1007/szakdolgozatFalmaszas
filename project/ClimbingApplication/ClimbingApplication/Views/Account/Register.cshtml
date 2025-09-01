@@ -1,0 +1,56 @@
+﻿@model ClimbingApplication.Models.RegisterView
+@{
+    ViewData["Title"] = "Regisztráció";
+}
+
+<h2>Regisztráció</h2>
+
+<form asp-action="Register" method="post">
+    <div class="form-group">
+        <label asp-for="VezetekNev"></label>
+        <input asp-for="VezetekNev" class="form-control" />
+        <span asp-validation-for="VezetekNev" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="KeresztNev"></label>
+        <input asp-for="KeresztNev" class="form-control" />
+        <span asp-validation-for="KeresztNev" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="FelhasznaloNev"></label>
+        <input asp-for="FelhasznaloNev" class="form-control" />
+        <span asp-validation-for="FelhasznaloNev" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" type="email"/>
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Jelszo"></label>
+        <input asp-for="Jelszo" class="form-control" type="password"/>
+        <span asp-validation-for="Jelszo" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="JelszoMegerosites"></label>
+        <input asp-for="JelszoMegerosites" class="form-control" type="password"/>
+        <span asp-validation-for="JelszoMegerosites" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="SzuletesiIdo"></label>
+        <input asp-for="SzuletesiIdo" class="form-control" type="date" max="@DateTime.Today.ToString("yyyy-MM-dd")"/>
+        <span asp-validation-for="SzuletesiIdo" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Telefonszam"></label>
+        <input asp-for="Telefonszam" class="form-control" />
+        <span asp-validation-for="Telefonszam" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Regisztráció</button>
+</form>
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
