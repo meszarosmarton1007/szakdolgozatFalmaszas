@@ -186,7 +186,18 @@
             <div class="form-group">
                <!-- <label asp-for="FalID" class="control-label"></label>-->
                 <!--<select asp-for="FalID" class ="form-control" asp-items="ViewBag.FalID"></select>-->
-                <input type="hidden" asp-for="FalID" value="@ViewData["FalID"]" />
+                <!--<input type="hidden" asp-for="FalID" value="@ViewData["FalID"]" />-->
+                @if (ViewBag.FalId == null)
+                {
+                    <div class="form-group">
+                        <label>Fal</label>
+                        <select asp-for="FalID" asp-items="@ViewData[" FalID"] as SelectList" class="form-control"></select>
+                    </div>
+                }
+                else
+                {
+                    <input type="hidden" name="falId" value="@ViewBag.FalId" />
+                }
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" formmethod="post"/>
@@ -196,7 +207,7 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a href="@Url.Action("Utak", "Falak", new { id = ViewBag.FalId })">Back to List</a>
 </div>
 
 @section Scripts {

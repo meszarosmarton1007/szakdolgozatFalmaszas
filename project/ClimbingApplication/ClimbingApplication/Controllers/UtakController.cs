@@ -22,9 +22,9 @@ namespace ClimbingApplication.Controllers
         }
 
         // GET: Utak
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? falId)
         {
-            var eFContextcs = _context.Utak
+            IQueryable<Utak> eFContextcs = _context.Utak
                 .Include(u => u.Falonut)                //Falnak a neve
                 .Include(u => u.UtLetrehozo)            //A mászó aki létrehozta
                 .Include(u => u.Hozzaszolasoks)         //hozzászólás betöltése
@@ -32,6 +32,12 @@ namespace ClimbingApplication.Controllers
                 .Include(u => u.Hozzaszolasoks)         
                     .ThenInclude(h => h.Valaszok)       //válaszok betöltése
                         .ThenInclude(v => v.Valasziro); //a válasznak az írója
+            if (falId.HasValue)
+            {
+                eFContextcs = eFContextcs.Where(u => u.FalID == falId.Value);
+                ViewBag.FalId = falId.Value;
+            }
+            
             return View(await eFContextcs.ToListAsync());
 
         }
@@ -52,22 +58,36 @@ namespace ClimbingApplication.Controllers
             {
                 return NotFound();
             }
-
+            ViewBag.FalId = utak.FalID;
             return View(utak);
         }
 
         // GET: Utak/Create
-        public IActionResult Create(int? falId)
+        public IActionResult Create(int falId)
         {
-            if (falId.HasValue)
+            /*  if (falId.HasValue)
+              {
+                  //ViewData["FalID"] = new SelectList(_context.Falak, "ID", "nev", falId.Value);
+                  //ViewBag.FalId = falId.Value;
+                  //var fal = _context.Falak.FirstOrDefault(f => f.ID == falId.Value);
+                  if (falId.HasValue)
+                  {
+                      //ViewBag.FalNev = fal.nev;
+                      ViewBag.FalId = falId.Value;
+                  }
+
+              }
+              else
+              {
+                  ViewData["FalID"] = new SelectList(_context.Falak, "ID", "nev");
+              }*/
+            var ut = new Utak
             {
-                ViewData["FalID"] = falId; //new SelectList(_context.Falak, "ID", "nev");//ezt változtattam
-            }
-            else
-            {
-                ViewData["FalID"] = new SelectList(_context.Falak, "ID", "nev");
-            }
-            return View();
+                FalID = falId,
+                letrehozva = DateOnly.FromDateTime(DateTime.Now)
+            };
+            ViewBag.FalId = falId;
+            return View(ut);
         }
 
         // POST: Utak/Create
@@ -94,9 +114,10 @@ namespace ClimbingApplication.Controllers
 
                 _context.Add(utak);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index), new {falId = falId});
+                return RedirectToAction("Utak", "Falak", new { id = utak.FalID });
             }
-           // ViewData["FalID"] = new SelectList(_context.Falak, "ID", "nev", utak.FalID);
+            // ViewData["FalID"] = new SelectList(_context.Falak, "ID", "nev", utak.FalID);
+            ViewBag.FalId = falId;
             return View(utak);
         }
 
@@ -117,6 +138,7 @@ namespace ClimbingApplication.Controllers
                 return NotFound();
             }
             //ViewData["FalID"] = new SelectList(_context.Falak, "ID", "nev", utak.FalID);
+           ViewBag.FalId = utak.FalID;
             return View(utak);
         }
 
@@ -151,6 +173,8 @@ namespace ClimbingApplication.Controllers
 
                     _context.Update(utak);
                     await _context.SaveChangesAsync();
+
+                    return RedirectToAction("Utak", "Falak", new { id = utak.FalID });
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -163,9 +187,10 @@ namespace ClimbingApplication.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index), new {falId = utak.FalID});
+                
             }
             //ViewData["FalID"] = new SelectList(_context.Falak, "ID", "nev", utak.FalID);
+            ViewBag.FalID = utak.FalID;
             return View(utak);
         }
 
@@ -185,7 +210,7 @@ namespace ClimbingApplication.Controllers
             {
                 return NotFound();
             }
-
+            ViewBag.FalId = utak.FalID;
             return View(utak);
         }
 
@@ -201,7 +226,7 @@ namespace ClimbingApplication.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Utak", "Falak", new { id = utak.FalID });
         }
 
         private bool UtakExists(int id)

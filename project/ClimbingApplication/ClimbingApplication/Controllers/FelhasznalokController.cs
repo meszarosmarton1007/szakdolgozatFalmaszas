@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ClimbingApplication.Context;
 using ClimbingApplication.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace ClimbingApplication.Controllers
 {
@@ -83,7 +84,22 @@ namespace ClimbingApplication.Controllers
             {
                 return NotFound();
             }
-            return View(felhasznalok);
+            var model = new FelhasznaloEdit
+            {
+                ID = felhasznalok.ID,
+                vezetekNev = felhasznalok.vezetekNev,
+                KeresztNev = felhasznalok.keresztNev,
+                email = felhasznalok.email,
+                telefonszam = felhasznalok.telefonszam,
+                szuletesiIdo = felhasznalok.szuletesiIdo,
+                rang = felhasznalok.rang,
+                felhasznaloNev = felhasznalok.felhasznaloNev,
+                ujJelszo = string.Empty
+               
+
+            };
+
+            return View(model);
         }
 
         // POST: Felhasznalok/Edit/5
@@ -91,9 +107,9 @@ namespace ClimbingApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,vezetekNev,keresztNev,email,jelszo,szuletesiIdo,telefonszam,rang,felhasznaloNev")] Felhasznalok felhasznalok)
+        public async Task<IActionResult> Edit(int id, FelhasznaloEdit model)
         {
-            if (_context.Felhasznalok.Any(f => f.felhasznaloNev == felhasznalok.felhasznaloNev && f.ID != felhasznalok.ID))
+           /* if (_context.Felhasznalok.Any(f => f.felhasznaloNev == felhasznalok.felhasznaloNev && f.ID != felhasznalok.ID))
             {
                 ModelState.AddModelError("felhasznalonev", "Ez a név már foglalt! Kérem adj meg egy másik felhasználónevet!");
             }
@@ -124,7 +140,43 @@ namespace ClimbingApplication.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(felhasznalok);
+            return View(felhasznalok);*/
+
+            if(id != model.ID)
+            {
+                return NotFound();
+            }
+
+            if(!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var user = await _context.Felhasznalok.FindAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            user.vezetekNev = model.vezetekNev;
+            user.keresztNev = model.KeresztNev;
+            user.email = model.email;
+            user.telefonszam = model.telefonszam;
+            user.szuletesiIdo = model.szuletesiIdo;
+            user.rang = model.rang;
+            user.felhasznaloNev = model.felhasznaloNev;
+
+            //ha van jelszómódosítás
+            if (!string.IsNullOrWhiteSpace(model.ujJelszo))
+            {
+                var hasher = new PasswordHasher<Felhasznalok>();
+                user.jelszo = hasher.HashPassword(user, model.ujJelszo);
+            }
+
+            _context.Update(user);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Felhasznalok/Delete/5

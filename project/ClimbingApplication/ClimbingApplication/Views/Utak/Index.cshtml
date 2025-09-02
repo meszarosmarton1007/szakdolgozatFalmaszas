@@ -7,9 +7,10 @@
 
 }
 <h2>
-    @if (!string.IsNullOrEmpty(falNev))
+    @if (!string.IsNullOrEmpty(falNev) || falId != null)
     {
         @:Utak a @falNev falon
+  
     }
     else
     {
@@ -85,9 +86,9 @@ else
                     @Html.DisplayFor(modelItem => item.UtLetrehozo.email)
             </td>
             <td>
-                <a asp-controller="Utak" asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-controller="Utak" asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                <a asp-controller="Utak" asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                    <a asp-controller="Utak" asp-action="Edit" asp-route-id="@item.ID" asp-route-falId="@ViewBag.FalId">Edit</a> |
+                    <a asp-controller="Utak" asp-action="Details" asp-route-id="@item.ID" asp-route-falId="@ViewBag.FalId">Details</a> |
+                    <a asp-controller="Utak" asp-action="Delete" asp-route-id="@item.ID" asp-route-falId="@ViewBag.FalId">Delete</a>
             </td>
         </tr>
         <tr>

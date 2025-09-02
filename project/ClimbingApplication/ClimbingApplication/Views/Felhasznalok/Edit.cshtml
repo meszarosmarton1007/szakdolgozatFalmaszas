@@ -1,4 +1,4 @@
-﻿@model ClimbingApplication.Models.Felhasznalok
+﻿@model ClimbingApplication.Models.FelhasznaloEdit
 
 @{
     ViewData["Title"] = "Edit";
@@ -10,48 +10,41 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="ID" />
             <div class="form-group">
-                <label asp-for="vezetekNev" class="control-label"></label>
-                <input asp-for="vezetekNev" class="form-control" />
-                <span asp-validation-for="vezetekNev" class="text-danger"></span>
+                <label>Vezetéknév</label>
+                <input asp-for="vezetekNev" />
             </div>
             <div class="form-group">
-                <label asp-for="keresztNev" class="control-label"></label>
-                <input asp-for="keresztNev" class="form-control" />
-                <span asp-validation-for="keresztNev" class="text-danger"></span>
+                <label>Keresztnév</label>
+                <input asp-for="KeresztNev" />
             </div>
             <div class="form-group">
-                <label asp-for="email" class="control-label"></label>
-                <input asp-for="email" class="form-control" type="email"/>
-                <span asp-validation-for="email" class="text-danger"></span>
+                <label>Email</label>
+                <input asp-for="email" />
             </div>
             <div class="form-group">
-                <label asp-for="jelszo" class="control-label"></label>
-                <input asp-for="jelszo" class="form-control" type="password"/>
-                <span asp-validation-for="jelszo" class="text-danger"></span>
+                <label>Születési idő</label>
+                <input asp-for="szuletesiIdo" type="date" />
             </div>
             <div class="form-group">
-                <label asp-for="szuletesiIdo" class="control-label"></label>
-                <input asp-for="szuletesiIdo" class="form-control" type="date"/>
-                <span asp-validation-for="szuletesiIdo" class="text-danger"></span>
+                <label>Telefonszám</label>
+                <input asp-for="telefonszam" />
             </div>
             <div class="form-group">
-                <label asp-for="telefonszam" class="control-label"></label>
-                <input asp-for="telefonszam" class="form-control" />
-                <span asp-validation-for="telefonszam" class="text-danger"></span>
+                <label>Felhasználónév</label>
+                <input asp-for="felhasznaloNev" />
             </div>
             <div class="form-group">
-                <label asp-for="rang" class="control-label"></label>
-                <input asp-for="rang" class="form-control" />
-                <span asp-validation-for="rang" class="text-danger"></span>
+                <label>Rang</label>
+                <input asp-for="rang" />
             </div>
             <div class="form-group">
-                <label asp-for="felhasznaloNev" class="control-label"></label>
-                <input asp-for="felhasznaloNev" class="form-control" />
-                <span asp-validation-for="felhasznaloNev" class="text-danger"></span>
+                <label>Új jelszó</label>
+                <input asp-for="ujJelszo" type="password" class="form-control"/>
+                <span asp-validation-for="ujJelszo" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

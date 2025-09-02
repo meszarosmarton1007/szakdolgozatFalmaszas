@@ -70,18 +70,18 @@ namespace ClimbingApplication.Controllers
         }
 
         // GET: Falak/Create
-        public IActionResult Create(int falmaszoHelyId)
+        public IActionResult Create(int falmaszohelyId)
         {
             //ViewData["FalmaszohelyID"] = new SelectList(_context.FalmaszoHelyek, "ID", "cim");
             //return View();
 
             var fal = new Falak
             {
-                FalmaszohelyID = falmaszoHelyId,
+                FalmaszohelyID = falmaszohelyId,
                 letrehozva = DateOnly.FromDateTime(DateTime.Now)
 
             };
-
+            ViewBag.FalmaszohelyId = falmaszohelyId;
             return View(fal);
         }
 
@@ -90,7 +90,7 @@ namespace ClimbingApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,nev,kep,letrehozva,FalmaszohelyID")] Falak falak, int falmaszoHelyId)
+        public async Task<IActionResult> Create([Bind("ID,nev,kep,letrehozva,FalmaszohelyID")] Falak falak, int falmaszohelyId)
         {
             if (ModelState.IsValid)
             {
@@ -102,18 +102,19 @@ namespace ClimbingApplication.Controllers
                 }
 
                 falak.FelhasznaloID = int.Parse(userIdStr);
-                falak.FalmaszohelyID = falmaszoHelyId;
+                falak.FalmaszohelyID = falmaszohelyId;
 
                 _context.Add(falak);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index), new {falmaszoHelyId = falak.FalmaszohelyID});
             }
-            ViewData["FalmaszohelyID"] = new SelectList(_context.FalmaszoHelyek, "ID", "cim", falak.FalmaszohelyID);
+            //ViewData["FalmaszohelyID"] = new SelectList(_context.FalmaszoHelyek, "ID", "cim", falak.FalmaszohelyID);
+            ViewBag.FalmaszohelyId = falmaszohelyId;
             return View(falak);
         }
 
         // GET: Falak/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int? id, int? falmaszohelyId)
         {
             if (id == null)
             {
@@ -128,6 +129,7 @@ namespace ClimbingApplication.Controllers
             {
                 return NotFound();
             }
+            ViewBag.Falhelye = falmaszohelyId ?? falak.FalmaszohelyID;
             //ViewData["FalmaszohelyID"] = new SelectList(_context.FalmaszoHelyek, "ID", "cim", falak.FalmaszohelyID);
             return View(falak);
         }
@@ -137,7 +139,7 @@ namespace ClimbingApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,nev,kep,letrehozva,FalmaszohelyID")] Falak falak)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,nev,kep,letrehozva,FalmaszohelyID")] Falak falak, int? falmaszohelyId)
         {
             if (id != falak.ID)
             {
@@ -173,9 +175,10 @@ namespace ClimbingApplication.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index), new {falmaszohelyId = falak.FalmaszohelyID});
+                return RedirectToAction(nameof(Index), new { falmaszohelyId = falak.FalmaszohelyID });
             }
             //ViewData["FalmaszohelyID"] = new SelectList(_context.FalmaszoHelyek, "ID", "cim", falak.FalmaszohelyID);
+            ViewBag.FalmaszohelyId = falmaszohelyId ?? falak.FalmaszohelyID;
             return View(falak);
         }
 
@@ -210,7 +213,7 @@ namespace ClimbingApplication.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new {falmaszohelyId = falak.FalmaszohelyID});
         }
 
         private bool FalakExists(int id)
