@@ -56,9 +56,9 @@
                 @Html.DisplayFor(modelItem => item.Letrehozo.felhasznaloNev)
             </td>
             <td>
-                    <a asp-action="Edit" asp-route-id="@item.ID" asp-route-falmaszohelyId="@ViewBag.FalmaszohelyId">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.ID" asp-route-falmaszohelyId="@ViewBag.FalmaszohelyId">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.ID" asp-route-falmaszohelyId="@ViewBag.FalmaszohelyId">Delete</a>
+                    <a asp-controller="Falak" asp-action="Edit" asp-route-id="@item.ID" asp-route-falmaszohelyId="@ViewBag.FalmaszohelyId">Edit</a> |
+                    <a asp-controller="Falak" asp-action="Details" asp-route-id="@item.ID" asp-route-falmaszohelyId="@ViewBag.FalmaszohelyId">Details</a> |
+                    <a asp-controller="Falak" asp-action="Delete" asp-route-id="@item.ID" asp-route-falmaszohelyId="@ViewBag.FalmaszohelyId">Delete</a>
             </td>
         </tr>
     
