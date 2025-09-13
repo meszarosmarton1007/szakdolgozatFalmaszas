@@ -30,6 +30,15 @@ namespace ClimbingApplication.Controllers
             {
                 query = query.Where(f => f.FalmaszohelyID == falmaszohelyId);   
                 ViewBag.FalmaszohelyId = falmaszohelyId.Value;
+
+                var terem = await _context.FalmaszoHelyek
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(t => t.ID == falmaszohelyId);
+
+                if (terem != null)
+                {
+                    ViewBag.TeremNev = terem.nev;
+                }
             }
             return View(await query.ToListAsync());
             

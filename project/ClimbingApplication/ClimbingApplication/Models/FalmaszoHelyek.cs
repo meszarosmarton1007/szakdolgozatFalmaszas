@@ -17,7 +17,7 @@ namespace ClimbingApplication.Models
         [Required]
         public string honlap { get; set; }
 
-        public string koordinata { get; set; }
+        public string nev { get; set; }
         
         [Required]
         public string leiras { get; set; }

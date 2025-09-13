@@ -1,21 +1,15 @@
 ﻿@model IEnumerable<ClimbingApplication.Models.Utak>
 @{
     ViewData["Title"] = "Index";
-    var falNev = ViewData["FalNev"] as string;
     var falId = ViewData["FalID"];
 
 
 }
 <h2>
-    @if (!string.IsNullOrEmpty(falNev) || falId != null)
-    {
-        @:Utak a @falNev falon
-  
-    }
-    else
-    {
-        @: Minden út
-    }
+
+    Utak a @ViewBag.falNev falon a @ViewBag.FalmaszohelyNev teremben
+
+
 </h2>
 
 

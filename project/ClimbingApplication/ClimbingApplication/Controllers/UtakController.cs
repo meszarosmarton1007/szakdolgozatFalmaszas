@@ -35,18 +35,23 @@ namespace ClimbingApplication.Controllers
                     .ThenInclude(h => h.Valaszok)       //válaszok betöltése
                         .ThenInclude(v => v.Valasziro); //a válasznak az írója
         
-                eFContextcs = eFContextcs.Where(u => u.FalID == falId);
+            eFContextcs = eFContextcs.Where(u => u.FalID == falId);
                 
 
-                var fal = await _context.Falak.AsNoTracking().FirstOrDefaultAsync(f => f.ID == falId);
-                if (fal == null)
-                {
-                    return NotFound();
-                }
+            var fal = await _context.Falak.Include(f => f.Falhelye).AsNoTracking().FirstOrDefaultAsync(f => f.ID == falId);
+            if (fal == null)
+            {
+                 return NotFound();
+            }
                 
 
-                ViewBag.FalmaszohelyID = fal.Falhelye;
-                ViewBag.FalId = falId;
+
+            ViewBag.FalmaszohelyID = fal.Falhelye;
+            ViewBag.FalId = falId;
+            ViewBag.FalNev = fal.nev;
+            ViewBag.FalmaszohelyNev = fal.Falhelye.nev;
+
+
             
 
             return View(await eFContextcs.ToListAsync());

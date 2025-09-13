@@ -5,7 +5,12 @@
     var falmaszohelyId = ViewData["FalmaszohelyID"];
 }
 
-<h1>Falak</h1>
+
+
+@if(ViewBag.TeremNev != null)
+{
+    <h2>A @ViewBag.TeremNev helyen található falak</h2>
+}
 @if(ViewBag.FalmaszohelyId != null)
 {
     <p>

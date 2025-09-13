@@ -79,7 +79,7 @@ namespace ClimbingApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,orszag,cim,honlap,koordinata,leiras,FelhasznalokID")] FalmaszoHelyek falmaszoHelyek)
+        public async Task<IActionResult> Create([Bind("ID,orszag,cim,honlap,nev,leiras,FelhasznalokID")] FalmaszoHelyek falmaszoHelyek)
         {
             if (ModelState.IsValid)
             {
@@ -122,7 +122,7 @@ namespace ClimbingApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,orszag,cim,honlap,koordinata,leiras,FelhasznalokID")] FalmaszoHelyek falmaszoHelyek)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,orszag,cim,honlap,nev,leiras,FelhasznalokID")] FalmaszoHelyek falmaszoHelyek)
         {
             if (id != falmaszoHelyek.ID)
             {
