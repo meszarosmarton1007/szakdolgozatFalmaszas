@@ -190,7 +190,7 @@
 </div>
 
 <div>
-        <a href="@Url.Action("Utak", "Falak", new { id = ViewBag.FalId })">Back to List</a>
+        <a asp-controller="Utak" asp-action="Index" asp-route-falId="@ViewBag.FalId" class="btn btn-secondary">Back to List</a>
 </div>
 
 @section Scripts {

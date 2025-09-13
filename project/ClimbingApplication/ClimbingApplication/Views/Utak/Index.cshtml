@@ -18,18 +18,15 @@
     }
 </h2>
 
-@if (!string.IsNullOrEmpty(falNev))
-{
+
     <p>
+        <a asp-controller="FalmaszoHelyek" asp-action="Falak" asp-route-falmaszohelyId="@ViewBag.FalmaszohelyId" class="btn btn-secondary">Vissza a falakhoz</a>
+        
         <a asp-controller="Utak" asp-action="Create" asp-route-falId="@falId" class="btn btn-primary">Új út létrehozása</a>
     </p>
-}
-else
-{
-    <p>
-        <a asp-action="Create">Új út létrehozása</a>
-    </p>
-}
+
+
+
 
 <h1>Index</h1>
 
@@ -135,14 +132,14 @@ else
                                                 @if (User.Identity.IsAuthenticated && (valaszok.FelhasznaloID == int.Parse(User.FindFirstValue("UserId")) || User.IsInRole("admin")))
                                                 {
                                                     <!--Szekeszési rész-->
-                                                    <form asp-asp-controller="Valaszok" asp-action="myEdit" method="post" class="d-inline">
+                                                    <form asp-controller="Valaszok" asp-action="myEdit" method="post" class="d-inline">
                                                         <input type="hidden" name="id" value="@valaszok.ID" />
                                                         <input type="text" name="valasz" value="@valaszok.valasz" class=" form-control d-inline w-50" />
                                                         <button type="submit" class="btn btn-sm btn-warning">Mentés</button>
                                                     </form>
 
                                                     <!--Törlési rész-->
-                                                    <form asp-asp-controller="Valaszok" asp-action="myDelete" method="post" class="d-inline">
+                                                    <form asp-controller="Valaszok" asp-action="myDelete" method="post" class="d-inline">
                                                         <input type="hidden" name="id" value="@valaszok.ID" />
                                                         <button type="submit" class="btn btn-sm btn-danger">Törlés</button>
                                                     </form>

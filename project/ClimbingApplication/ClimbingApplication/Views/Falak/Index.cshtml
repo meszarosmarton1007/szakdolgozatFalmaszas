@@ -15,9 +15,6 @@
     </p>
 }
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
 
@@ -44,7 +41,7 @@
               
         <tr>
             <td>
-               <a asp-action="Utak" asp-route-id="@item.ID"> @Html.DisplayFor(modelItem => item.nev)</a>
+               <a href="/FalmaszoHelyek/Utak/@item.ID"> @Html.DisplayFor(modelItem => item.nev)</a>
             </td>
             <td>
                <img  src="@Html.DisplayFor(modelItem => item.kep)" />

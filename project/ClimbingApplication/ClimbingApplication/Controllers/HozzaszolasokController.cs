@@ -90,7 +90,12 @@ namespace ClimbingApplication.Controllers
             _context.Add(newComment);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Index", "Utak");
+            var falId = await _context.Utak
+                .Where(u => u.ID == utakId)
+                .Select(u => u.FalID)
+                .FirstOrDefaultAsync();
+
+            return RedirectToAction("Index", "Utak", new {falId});
         }
 
         //Sajt comment szerkesztése az közvetlenül az utaknál
@@ -115,7 +120,12 @@ namespace ClimbingApplication.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            return RedirectToAction("Index", "Utak");
+            var falId = await _context.Utak
+               .Where(u => u.ID == comment.UtakID)
+               .Select(u => u.FalID)
+               .FirstOrDefaultAsync();
+
+            return RedirectToAction("Index", "Utak", new {falId});
         }
 
         //Saját komment törlése valamint az admin mindet tud törölni az utaknál
@@ -137,7 +147,11 @@ namespace ClimbingApplication.Controllers
                 _context.Hozzaszolasok.Remove(comment);
                 await _context.SaveChangesAsync();
             }
-            return RedirectToAction("Index", "Utak");
+            var falId = await _context.Utak
+                .Where(u => u.ID == comment.UtakID)
+                .Select(u => u.FalID)
+                .FirstOrDefaultAsync();
+            return RedirectToAction("Index", "Utak" ,new {falId});
         }
 
 

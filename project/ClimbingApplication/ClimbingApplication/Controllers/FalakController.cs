@@ -106,7 +106,7 @@ namespace ClimbingApplication.Controllers
 
                 _context.Add(falak);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index), new {falmaszoHelyId = falak.FalmaszohelyID});
+                return RedirectToAction(nameof(Index), new {falmaszohelyId = falak.FalmaszohelyID});
             }
             //ViewData["FalmaszohelyID"] = new SelectList(_context.FalmaszoHelyek, "ID", "cim", falak.FalmaszohelyID);
             ViewBag.FalmaszohelyId = falmaszohelyId;

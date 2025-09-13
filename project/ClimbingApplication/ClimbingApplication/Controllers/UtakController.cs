@@ -12,6 +12,7 @@ using System.Security.Claims;
 
 namespace ClimbingApplication.Controllers
 {
+    [Route("FalmaszoHelyek/Utak")]
     public class UtakController : Controller
     {
         private readonly EFContextcs _context;
@@ -22,7 +23,8 @@ namespace ClimbingApplication.Controllers
         }
 
         // GET: Utak
-        public async Task<IActionResult> Index(int? falId)
+        [HttpGet("{falId}")]
+        public async Task<IActionResult> Index(int falId)
         {
             IQueryable<Utak> eFContextcs = _context.Utak
                 .Include(u => u.Falonut)                //Falnak a neve
@@ -32,17 +34,27 @@ namespace ClimbingApplication.Controllers
                 .Include(u => u.Hozzaszolasoks)         
                     .ThenInclude(h => h.Valaszok)       //válaszok betöltése
                         .ThenInclude(v => v.Valasziro); //a válasznak az írója
-            if (falId.HasValue)
-            {
-                eFContextcs = eFContextcs.Where(u => u.FalID == falId.Value);
-                ViewBag.FalId = falId.Value;
-            }
-            
-            return View(await eFContextcs.ToListAsync());
+        
+                eFContextcs = eFContextcs.Where(u => u.FalID == falId);
+                
 
+                var fal = await _context.Falak.AsNoTracking().FirstOrDefaultAsync(f => f.ID == falId);
+                if (fal == null)
+                {
+                    return NotFound();
+                }
+                
+
+                ViewBag.FalmaszohelyID = fal.Falhelye;
+                ViewBag.FalId = falId;
+            
+
+            return View(await eFContextcs.ToListAsync());
+            
         }
 
         // GET: Utak/Details/5
+        [HttpGet("Utak/Details/{id}")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -63,6 +75,7 @@ namespace ClimbingApplication.Controllers
         }
 
         // GET: Utak/Create
+        [HttpGet("Utak/Create/{falId?}")]
         public IActionResult Create(int falId)
         {
             /*  if (falId.HasValue)
@@ -93,7 +106,7 @@ namespace ClimbingApplication.Controllers
         // POST: Utak/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPost("Utak/Create/{falId}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,kep,nehezseg,nev,leiras,letrehozva,FalID")] Utak utak, int? falId)
         {
@@ -114,7 +127,7 @@ namespace ClimbingApplication.Controllers
 
                 _context.Add(utak);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Utak", "Falak", new { id = utak.FalID });
+                return RedirectToAction("Index", new {falId});
             }
             // ViewData["FalID"] = new SelectList(_context.Falak, "ID", "nev", utak.FalID);
             ViewBag.FalId = falId;
@@ -122,6 +135,7 @@ namespace ClimbingApplication.Controllers
         }
 
         // GET: Utak/Edit/5
+        [HttpGet("Utak/Edit/{id}")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -145,7 +159,7 @@ namespace ClimbingApplication.Controllers
         // POST: Utak/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPost("Utak/Edit/{id}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ID,kep,nehezseg,nev,leiras,letrehozva,FalID")] Utak utak)
         {
@@ -174,7 +188,7 @@ namespace ClimbingApplication.Controllers
                     _context.Update(utak);
                     await _context.SaveChangesAsync();
 
-                    return RedirectToAction("Utak", "Falak", new { id = utak.FalID });
+                    return RedirectToAction("Index", new { falId = utak.FalID });
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -195,6 +209,7 @@ namespace ClimbingApplication.Controllers
         }
 
         // GET: Utak/Delete/5
+        [HttpGet("Utak/Delete/{id}")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -215,7 +230,7 @@ namespace ClimbingApplication.Controllers
         }
 
         // POST: Utak/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost("Utak/Delete/{id}"), ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
@@ -224,9 +239,10 @@ namespace ClimbingApplication.Controllers
             {
                 _context.Utak.Remove(utak);
             }
-
+            
+            var falId = utak?.FalID;
             await _context.SaveChangesAsync();
-            return RedirectToAction("Utak", "Falak", new { id = utak.FalID });
+            return RedirectToAction("Index", new { falId });
         }
 
         private bool UtakExists(int id)

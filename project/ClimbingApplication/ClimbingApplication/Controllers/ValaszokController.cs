@@ -92,7 +92,12 @@ namespace ClimbingApplication.Controllers
             _context.Add(newReply);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Index", "Utak");
+            var falId = await _context.Hozzaszolasok
+                .Where(h => h.ID == hozzaszolasId)
+                .Select(h => h.UtHozzaszolas.FalID)
+                .FirstOrDefaultAsync();
+
+            return RedirectToAction("Index", "Utak", new {falId});
         }
 
         //Saját válsz szerkesztése az utaknál valamit az admin mindent tud szerkeszteni
@@ -116,7 +121,12 @@ namespace ClimbingApplication.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            return RedirectToAction("Index", "Utak");
+            var falId = await _context.Hozzaszolasok
+                .Where(h => h.ID == repy.HozzaszolasID)
+                .Select(h => h.UtHozzaszolas.FalID)
+                .FirstOrDefaultAsync();
+
+            return RedirectToAction("Index", "Utak", new {falId});
         }
 
         //saját válasz törlése valamint az admin mindent tud törölni
@@ -140,7 +150,12 @@ namespace ClimbingApplication.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            return RedirectToAction("Index", "Utak");
+            var falId = await _context.Hozzaszolasok
+                .Where(h => h.ID == repy.HozzaszolasID)
+                .Select(h => h.UtHozzaszolas.FalID)
+                .FirstOrDefaultAsync();
+
+            return RedirectToAction("Index", "Utak" , new {falId});
         }
 
         // GET: Valaszok/Edit/5

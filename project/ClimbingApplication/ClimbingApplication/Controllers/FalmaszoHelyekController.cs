@@ -21,7 +21,24 @@ namespace ClimbingApplication.Controllers
         {
             _context = context;
         }
+        
+        [Route("FalmaszoHelyek/Falak/{falmaszohelyId?}")]
+        public async Task<IActionResult> Falak(int falmaszohelyId)
+        {
+            var falak = await _context.Falak
+                .Include(f => f.Falhelye)
+               .Include(f => f.Letrehozo)
+               .Where(f => f.FalmaszohelyID == falmaszohelyId).ToListAsync();
 
+            if (!falak.Any())
+            {
+                return NotFound();
+            }
+
+            ViewBag.FalmaszohelyId = falmaszohelyId;
+            return View("~/Views/Falak/Index.cshtml", falak);
+        }
+        
         // GET: FalmaszoHelyek
         public async Task<IActionResult> Index()
         {

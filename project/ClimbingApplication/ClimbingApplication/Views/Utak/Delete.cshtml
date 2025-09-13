@@ -58,6 +58,6 @@
     <form asp-action="Delete">
         <input type="hidden" asp-for="ID" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a href="@Url.Action("Utak", "Falak", new { id = ViewBag.FalId })">Back to List</a>
+        <a asp-controller="Utak" asp-action="Index" asp-route-falId="@ViewBag.FalId" class="btn btn-secondary">Back to List</a>
     </form>
 </div>
