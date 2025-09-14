@@ -46,7 +46,7 @@ namespace ClimbingApplication.Controllers
                 
 
 
-            ViewBag.FalmaszohelyID = fal.Falhelye;
+            ViewBag.FalmaszohelyId = fal.Falhelye.ID;//id hozzá lett írva
             ViewBag.FalId = falId;
             ViewBag.FalNev = fal.nev;
             ViewBag.FalmaszohelyNev = fal.Falhelye.nev;

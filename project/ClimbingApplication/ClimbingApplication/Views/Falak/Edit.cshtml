@@ -4,7 +4,7 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+<h1>Szerkesztés</h1>
 
 <h4>Falak</h4>
 <hr />
@@ -118,14 +118,14 @@
                 <input class="form-control" value="@Model.Letrehozo?.felhasznaloNev" disabled />
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Mentés" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index" asp-route-falmaszohelyId="@Model.FalmaszohelyID">Back to List</a>
+    <a asp-action="Index" asp-route-falmaszohelyId="@Model.FalmaszohelyID" class="btn btn-secondary">Vissza a falakhoz</a>
 </div>
 
 @section Scripts {

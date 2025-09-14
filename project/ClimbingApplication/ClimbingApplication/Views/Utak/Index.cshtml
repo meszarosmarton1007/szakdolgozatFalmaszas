@@ -1,5 +1,6 @@
 ﻿@model IEnumerable<ClimbingApplication.Models.Utak>
 @{
+
     ViewData["Title"] = "Index";
     var falId = ViewData["FalID"];
 
@@ -14,164 +15,150 @@
 
 
     <p>
-        <a asp-controller="FalmaszoHelyek" asp-action="Falak" asp-route-falmaszohelyId="@ViewBag.FalmaszohelyId" class="btn btn-secondary">Vissza a falakhoz</a>
-        
-        <a asp-controller="Utak" asp-action="Create" asp-route-falId="@falId" class="btn btn-primary">Új út létrehozása</a>
+    <a asp-controller="Falak" asp-action="Index" asp-route-falmaszohelyId="@ViewBag.FalmaszohelyId" class="btn btn-secondary">Vissza a falakhoz</a>
+    @if (User.Identity != null && User.Identity.IsAuthenticated)
+    {
+    <a asp-controller="Utak" asp-action="Create" asp-route-falId="@falId" class="btn btn-primary">Új út létrehozása</a>
+    }
     </p>
 
 
 
-
-<h1>Index</h1>
-
-
 <table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.kep)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.nehezseg)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.nev)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.leiras)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.letrehozva)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Falonut)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FelhasznaloID)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
             <td>
-               <img src="@Html.DisplayFor(modelItem => item.kep)" />
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.nehezseg)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.nev)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.leiras)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.letrehozva)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Falonut.nev)
-            </td>
-            <td>
-                    @Html.DisplayFor(modelItem => item.UtLetrehozo.email)
-            </td>
-            <td>
-                    <a asp-controller="Utak" asp-action="Edit" asp-route-id="@item.ID" asp-route-falId="@ViewBag.FalId">Edit</a> |
-                    <a asp-controller="Utak" asp-action="Details" asp-route-id="@item.ID" asp-route-falId="@ViewBag.FalId">Details</a> |
-                    <a asp-controller="Utak" asp-action="Delete" asp-route-id="@item.ID" asp-route-falId="@ViewBag.FalId">Delete</a>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="7">
-                <h5>Hosszászólások</h5>
-                <div>
-                        @if(item.Hozzaszolasoks != null && item.Hozzaszolasoks.Any())
-                        {
-                            foreach (var hozzaszolas in item.Hozzaszolasoks)
+                    <p>
+                        <h3>@Html.DisplayFor(modelItem => item.nev)</h3>
+                    </p>
+                 
+                    <div class="d-flex align-items-start mt-3">
+                        <!--Bal oldali-->
+                        <div class="me-3">
+                            <h5>Kép a falról</h5> <img src="@Html.DisplayFor(modelItem => item.kep)" />
+                        </div>
+                        <!--Jobb oldali-->
+                        <div>
+                            <p>
+                                <h5>Az út nehézsége</h5> @Html.DisplayFor(modelItem => item.nehezseg)
+                            </p>
+                            <p>
+                                <h5>Bővebb infó az útról</h5>  @Html.DisplayFor(modelItem => item.leiras)
+                            </p>
+                            <p>
+                                <h5>Létrehozás napja</h5>  @Html.DisplayFor(modelItem => item.letrehozva)
+                            </p>
+                            <p>
+                                <h5>Az út létrehozója</h5>  @Html.DisplayFor(modelItem => item.UtLetrehozo.felhasznaloNev)
+                            </p>
+                            <div class="d-flex align-items-center gap-2">
+
+                                <a asp-controller="Utak" asp-action="Details" asp-route-id="@item.ID" asp-route-falId="@ViewBag.FalId" class="btn btn-info">Részletek</a>
+
+
+
+                                @if (User.Identity.IsAuthenticated && (item.FelhasznaloID == int.Parse(User.FindFirstValue("UserId")) || User.IsInRole("admin")))
+                                {
+                                    <a asp-controller="Utak" asp-action="Edit" asp-route-id="@item.ID" asp-route-falId="@ViewBag.FalId" class="btn btn-warning">Szerkesztés</a>
+                                    <a asp-controller="Utak" asp-action="Delete" asp-route-id="@item.ID" asp-route-falId="@ViewBag.FalId" class="btn btn-danger">Törlés</a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <p>
+                        <h5>Hosszászólások</h5>
+                        <div>
+                            @if (item.Hozzaszolasoks != null && item.Hozzaszolasoks.Any())
                             {
-                             
-                                <div class="border p-2 my-2">
-                                    <strong> @hozzaszolas.UtHozzaszolo?.felhasznaloNev</strong>
-                                    <p>@hozzaszolas.hozzaszolas</p>
+                                foreach (var hozzaszolas in item.Hozzaszolasoks)
+                                {
 
-                                    @if (User.Identity.IsAuthenticated &&
-                                   (hozzaszolas.FelhasznaloID == int.Parse(User.FindFirstValue("UserId")) || User.IsInRole("admin")))
-                                    {
-                                        <!-- Szeksztés itt-->
-                                        <form asp-controller="Hozzaszolasok" asp-action="myEdit" method="post" class="d-inline">
-                                            <input type="hidden" name="id" value="@hozzaszolas.ID" />
-                                            <input type="text" name="hozzaszolas" value="@hozzaszolas.hozzaszolas" class="form-control d-inline w-50" />
-                                            <button type="submit" class="btn btn-sm btn-warning">Mentés</button>
-                                        </form>
+                                    <div class="border p-2 my-2">
+                                        <strong> @hozzaszolas.UtHozzaszolo?.felhasznaloNev</strong>
+                                        <p>@hozzaszolas.hozzaszolas</p>
 
-                                        <!--Törlés itt-->
-                                        <form asp-controller="Hozzaszolasok" asp-action="myDelete" method="post" class="d-inline">
-                                            <input type="hidden" name="id" value="@hozzaszolas.ID" />
-                                            <button type="submit" class="btn btn-sm btn-danger">Törlés</button>
-                                        </form>
-                                    }
+                                        @if (User.Identity.IsAuthenticated &&
+                                       (hozzaszolas.FelhasznaloID == int.Parse(User.FindFirstValue("UserId")) || User.IsInRole("admin")))
+                                        {
+                                            <!-- Szeksztés itt-->
+                                            <form asp-controller="Hozzaszolasok" asp-action="myEdit" method="post" class="d-inline">
+                                                <input type="hidden" name="id" value="@hozzaszolas.ID" />
+                                                <input type="text" name="hozzaszolas" value="@hozzaszolas.hozzaszolas" class="form-control d-inline w-50" />
+                                                <button type="submit" class="btn btn-sm btn-warning">Mentés</button>
+                                            </form>
 
-                                    <!--Válaszok itt lesznek-->
-                                    @if(hozzaszolas.Valaszok != null && hozzaszolas.Valaszok.Any())
-                                    {
-                                       <div class="ms-4">
-                                            @foreach(var valaszok in hozzaszolas.Valaszok)
-                                            {
-                                                <div class="border-start ps-2 my-1">
-                                                <strong>@valaszok.Valasziro?.felhasznaloNev</strong>
-                                                <p>@valaszok.valasz</p>
-                                                </div>
+                                            <!--Törlés itt-->
+                                            <form asp-controller="Hozzaszolasok" asp-action="myDelete" method="post" class="d-inline">
+                                                <input type="hidden" name="id" value="@hozzaszolas.ID" />
+                                                <button type="submit" class="btn btn-sm btn-danger">Törlés</button>
+                                            </form>
+                                        }
 
-                                                @if (User.Identity.IsAuthenticated && (valaszok.FelhasznaloID == int.Parse(User.FindFirstValue("UserId")) || User.IsInRole("admin")))
+                                        <!--Válaszok itt lesznek-->
+                                        @if (hozzaszolas.Valaszok != null && hozzaszolas.Valaszok.Any())
+                                        {
+                                            <div class="ms-4">
+                                                @foreach (var valaszok in hozzaszolas.Valaszok)
                                                 {
-                                                    <!--Szekeszési rész-->
-                                                    <form asp-controller="Valaszok" asp-action="myEdit" method="post" class="d-inline">
-                                                        <input type="hidden" name="id" value="@valaszok.ID" />
-                                                        <input type="text" name="valasz" value="@valaszok.valasz" class=" form-control d-inline w-50" />
-                                                        <button type="submit" class="btn btn-sm btn-warning">Mentés</button>
-                                                    </form>
+                                                    <div class="border-start ps-2 my-1">
+                                                        <strong>@valaszok.Valasziro?.felhasznaloNev</strong>
+                                                        <p>@valaszok.valasz</p>
+                                                    </div>
 
-                                                    <!--Törlési rész-->
-                                                    <form asp-controller="Valaszok" asp-action="myDelete" method="post" class="d-inline">
-                                                        <input type="hidden" name="id" value="@valaszok.ID" />
-                                                        <button type="submit" class="btn btn-sm btn-danger">Törlés</button>
-                                                    </form>
+                                                    @if (User.Identity.IsAuthenticated && (valaszok.FelhasznaloID == int.Parse(User.FindFirstValue("UserId")) || User.IsInRole("admin")))
+                                                    {
+                                                        <!--Szekeszési rész-->
+                                                        <form asp-controller="Valaszok" asp-action="myEdit" method="post" class="d-inline">
+                                                            <input type="hidden" name="id" value="@valaszok.ID" />
+                                                            <input type="text" name="valasz" value="@valaszok.valasz" class=" form-control d-inline w-50" />
+                                                            <button type="submit" class="btn btn-sm btn-warning">Mentés</button>
+                                                        </form>
+
+                                                        <!--Törlési rész-->
+                                                        <form asp-controller="Valaszok" asp-action="myDelete" method="post" class="d-inline">
+                                                            <input type="hidden" name="id" value="@valaszok.ID" />
+                                                            <button type="submit" class="btn btn-sm btn-danger">Törlés</button>
+                                                        </form>
+                                                    }
+
                                                 }
-                                                
-                            }
-                                         </div>   
-                                    }
+                                            </div>
+                                        }
                                         <!--Új válasz írása-->
                                         @if (User.Identity.IsAuthenticated)
                                         {
                                             <form asp-controller="Valaszok" asp-action="myCreate" method="post" class="ms-4 mt-2">
-                                                <input type="hidden" name="hozzaszolasId" value="@hozzaszolas.ID"/>
+                                                <input type="hidden" name="hozzaszolasId" value="@hozzaszolas.ID" />
                                                 <textarea name="valasz" class="form-control" placeholder="Valasz helye"></textarea>
                                                 <button type="submit" class="btn btn-primary mt-1">Valasz</button>
                                             </form>
                                         }
-                                        
-                                                       
-                                </div>
-                            }
-                        }
-                        else
-                        {
-                            <li>Nincsenek még hozzászólások</li>
-                        }
 
-                        <!--Új hozzászólás írása-->
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <form asp-controller="Hozzaszolasok" asp-action="myCreate" method="post" class="mt-3">
-                                <input type="hidden" name="utakId" value="@item.ID"/>
-                                <textarea name="hozzaszolas" class="form-control" placeholder="Valasz helye"></textarea>
-                                <button type="submit" class="btn btn-success mt-1">Hozzászólás</button>
-                            </form>
-                        }
-                    </div>
+
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <li>Nincsenek még hozzászólások</li>
+                            }
+
+                            <!--Új hozzászólás írása-->
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <form asp-controller="Hozzaszolasok" asp-action="myCreate" method="post" class="mt-3">
+                                    <input type="hidden" name="utakId" value="@item.ID" />
+                                    <textarea name="hozzaszolas" class="form-control" placeholder="Hozzászólás helye"></textarea>
+                                    <button type="submit" class="btn btn-success mt-1">Hozzászólás</button>
+                                </form>
+                            }
+                        </div>
+                    </p>
             </td>
+            
+            
+           
         </tr>
 }
     </tbody>

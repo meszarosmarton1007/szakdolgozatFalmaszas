@@ -24,11 +24,11 @@ namespace ClimbingApplication.Controllers
         public async Task<IActionResult> Index(int? falmaszohelyId)
         {
 
-            IQueryable<Falak> query = _context.Falak.Include(f => f.Falhelye).Include(f => f.Letrehozo);
+           var query = _context.Falak.Include(f => f.Falhelye).Include(f => f.Letrehozo).AsQueryable();
 
             if (falmaszohelyId.HasValue)
             {
-                query = query.Where(f => f.FalmaszohelyID == falmaszohelyId);   
+                query = query.Where(f => f.Falhelye.ID == falmaszohelyId.Value);   
                 ViewBag.FalmaszohelyId = falmaszohelyId.Value;
 
                 var terem = await _context.FalmaszoHelyek
@@ -42,21 +42,6 @@ namespace ClimbingApplication.Controllers
             }
             return View(await query.ToListAsync());
             
-            // var falak = _context.Falak.Include(f => f.Falhelye).Include(f => f.Letrehozo);
-
-           // if (falmaszohelyId.HasValue)
-            //{
-              //  var szurtFalak = falak.Where(f => f.FalmaszohelyID == falmaszohelyId.Value);
-              //  return View(await szurtFalak.ToListAsync());
-            //}
-
-           // return View(await falak.ToListAsync());
-
-            
-           // var eFContextcs = _context.Falak
-           //     .Include(f => f.Falhelye)
-           //     .Include(f => f.Letrehozo);
-          //  return View(await eFContextcs.ToListAsync());
         }
 
         // GET: Falak/Details/5

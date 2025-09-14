@@ -7,34 +7,34 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary">Új felhasználó hozzáadása</a>
 </p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.vezetekNev)
+                Vezetéknév
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.keresztNev)
+                Keresztnév
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.email)
+                email
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.jelszo)
+                Jelszo
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.szuletesiIdo)
+                Születési idő
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.telefonszam)
+                Telefonszám
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.rang)
+                rang
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.felhasznaloNev)
+                Felhasználónév
             </th>
         </tr>
     </thead>
@@ -65,10 +65,10 @@
             <td>
                 @Html.DisplayFor(modelItem => item.felhasznaloNev)
             </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                <td>
+                <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-warning">Szerkesztés</a> 
+                <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-info">Részletek</a> 
+                <a asp-action="Delete" asp-route-id="@item.ID" class="btn btn-danger">Törlés</a>
             </td>
         </tr>
 }

@@ -7,9 +7,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
 </head>
 
-<h1>Create</h1>
+<h1>Új fal létrehozása</h1>
 
-<h4>Falak</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -116,7 +115,7 @@
             </div>
             <div class="form-group">
                 
-                <input type="submit" value="Create" class="btn btn-primary" onclick="saveImage()" />
+                <input type="submit" value="Create" class="btn btn-primary" />
 
             </div>
         </form>
@@ -124,7 +123,7 @@
 </div>
 
 <div>
-    <a asp-action="Index" asp-route-falmaszohelyId="@Model.FalmaszohelyID">Back to List</a>
+    <a asp-action="Index" asp-route-falmaszohelyId="@Model.FalmaszohelyID" class="btn btn-secondary">Vissza a falakhoz</a>
 </div>
 
 @section Scripts {

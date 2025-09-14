@@ -22,7 +22,6 @@ namespace ClimbingApplication.Controllers
             _context = context;
         }
         
-        [Route("FalmaszoHelyek/Falak/{falmaszohelyId?}")]
         public async Task<IActionResult> Falak(int falmaszohelyId)
         {
             var falak = await _context.Falak
