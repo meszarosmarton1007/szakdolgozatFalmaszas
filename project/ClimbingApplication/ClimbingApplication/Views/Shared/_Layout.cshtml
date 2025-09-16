@@ -39,7 +39,6 @@
                                 </li>
                             }
                             <li class="nav-item">
-                                <span class="navbar-text me-2">Szia, @User.Identity.Name !</span>
                                 <form asp-controller="Account" asp-action="Logout" method="post">
                                     @Html.AntiForgeryToken()
                                     <button type="submit" class="btn btn-link nav-link">Kijelentkezés</button>
@@ -60,6 +59,10 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Register">Regisztráció</a>
                             </li>
                         }
+                        <li class="nav-item">
+
+                            <span class="navbar-text me-2">Szia, @User.Identity.Name !</span>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -70,12 +73,6 @@
             @RenderBody()
         </main>
     </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - Csak mássz fel - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

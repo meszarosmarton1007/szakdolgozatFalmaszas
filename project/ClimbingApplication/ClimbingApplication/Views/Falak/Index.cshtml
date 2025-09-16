@@ -53,20 +53,21 @@
                             <p>
                                 <h5>Létrehozó</h5> @Html.DisplayFor(modelItem => item.Letrehozo.felhasznaloNev)
                             </p>
+                            <div class="d-flex align-items-center gap-2">
+
+                                <a asp-controller="Falak" asp-action="Details" asp-route-id="@item.ID" asp-route-falmaszohelyId="@ViewBag.FalmaszohelyId" class="btn btn-info">Részletek</a>
+
+
+
+                                @if (User.Identity.IsAuthenticated && (item.FelhasznaloID == int.Parse(User.FindFirstValue("UserId")) || User.IsInRole("admin")))
+                                {
+                                    <a asp-controller="Falak" asp-action="Edit" asp-route-id="@item.ID" asp-route-falmaszohelyId="@ViewBag.FalmaszohelyId" class="btn btn-warning">Szerkesztés</a>
+                                    <a asp-controller="Falak" asp-action="Delete" asp-route-id="@item.ID" asp-route-falmaszohelyId="@ViewBag.FalmaszohelyId" class="btn btn-danger">Törlés</a>
+                                }
+
+                            </div>
                         </div>
-                        <div class="d-flex align-items-center gap-2">
-
-                            <a asp-controller="Falak" asp-action="Details" asp-route-id="@item.ID" asp-route-falmaszohelyId="@ViewBag.FalmaszohelyId" class="btn btn-info">Részletek</a>
-
-
-
-                            @if (User.Identity.IsAuthenticated && (item.FelhasznaloID == int.Parse(User.FindFirstValue("UserId")) || User.IsInRole("admin")))
-                            {
-                                <a asp-controller="Falak" asp-action="Edit" asp-route-id="@item.ID" asp-route-falmaszohelyId="@ViewBag.FalmaszohelyId" class="btn btn-warning">Szerkesztés</a>
-                                <a asp-controller="Falak" asp-action="Delete" asp-route-id="@item.ID" asp-route-falmaszohelyId="@ViewBag.FalmaszohelyId" class="btn btn-danger">Törlés</a>
-                            }
-
-                        </div>
+                        
                     </div>
                     
             </td>
