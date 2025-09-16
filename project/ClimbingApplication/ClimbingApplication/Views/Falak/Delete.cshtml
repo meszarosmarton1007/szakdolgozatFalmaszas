@@ -43,9 +43,47 @@
         </dd>
     </dl>
     
-    <form asp-action="Delete">
+    <form asp-action="Delete" id="deleteForm">
         <input type="hidden" asp-for="ID" />
+        <input type="hidden" id="image-Url" value="@Model.kep" />
         <input type="submit" value="Törlés" class="btn btn-danger" /> 
         <a asp-action="Index" asp-route-falmaszohelyId="@Model.FalmaszohelyID" class="btn btn-secondary">Vissza a falakhoz</a>
     </form>
 </div>
+
+@section Scripts{
+    <script>
+        const form = document.getElementById('deleteForm');
+        const imageUrlInput = document.getElementById('image-Url');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const imageUrl = imageUrlInput.value;
+
+            const url = new URL(imageUrl);
+            const path = url.pathname;
+
+            const fileName = decodeURIComponent(path.split('/').pop().split('?')[0]);
+
+            try {
+                const response = await fetch(`/api/Feltoltes/deleteimage?fileName=${fileName}`, {
+                    method: 'delete'
+                });
+
+                if (response.ok) {
+                    console.log("Kép sikeresen törölve");
+                    e.target.submit();
+                } else {
+                    const error = await response.text();
+                    console.error("Hiba a kép törlésekor: ", error);
+                    alert("Hiba a kép törlésekor");
+                }
+
+            } catch (error) {
+                console.error("Váratlan hiba: ", error);
+                alert("Váratlan hiba");
+            }
+        });
+    </script>
+}
