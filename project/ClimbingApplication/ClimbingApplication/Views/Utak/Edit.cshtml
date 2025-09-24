@@ -14,13 +14,33 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-    <div class="col-md-4">
+        
         <form asp-action="Edit" id="editForm">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="ID" />
             <div class="form-group">
-                <input asp-for="kep" class="form-control" type="hidden"/>
+                <input asp-for="kep" id="imgUrl" type="hidden"/>
+                <input value="@Model.kep" id="oldImgUrl" type="hidden" />
                 <span asp-validation-for="kep" class="text-danger"></span>
+                <select id="colorPicker">
+                    <option value="red">Piros</option>
+                    <option value="blue">Kék</option>
+                    <option value="green">Zöld</option>
+                    <option value="black">Fekete</option>
+                    <option value="white">Fehér</option>
+                    <option value="yellow">Sárga</option>
+                    <option value="orange">Narancssárga</option>
+                </select>
+                <button onclick="undo()" id="undoBtn">Visszavonás</button>
+                <button onclick="redo()" id="redoBtn">Visszaállítás</button>
+                <br />
+                <label>Korábbi kép</label><br />
+                @if (!string.IsNullOrEmpty(Model.kep))
+                {
+                    <img src="@Model.kep" alt="Régi kép" style="max-width:300px; display:block; margin-bottom:10px;" />
+                }
+                <canvas id="canvas" width="800" height="600"></canvas>
+                    <input type="file" id="imageLoader" accept="image/*" />
             </div>
             <div class="form-group">
                 <label asp-for="nehezseg" class="control-label"></label>
@@ -63,4 +83,174 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const canvas = new fabric.Canvas('canvas');
+            let stateStack = [];
+            let redoStack = [];
+            let isRestorngState = false;
+
+            const oldImageUrlInput = document.getElementById("oldImgUrl");
+            const newImageUrlInput = document.getElementById("imgUrl");
+
+            function saveState() {
+                if (isRestorngState) {
+                    return;
+                }
+                stateStack.push(canvas.toJSON());
+                redoStack = [];
+            }
+
+            function loadState(state) {
+                isRestorngState = true;
+                canvas.loadFromJSON(state, () => {
+                    canvas.renderAll();
+                    isRestorngState = false;
+                });
+            }
+
+            function undo() {
+                if(stateStack.length > 1){
+                    redoStack.push(stateStack.pop());
+                    loadState(stateStack[stateStack.length - 1]);
+                }
+            }
+
+            function redo() {
+                if (redoStack.length > 0) {
+                    const nextState = redoStack.pop();
+                    stateStack.push(nextState);
+                    loadState(nextState);
+                }
+            }
+
+            document.getElementById("undoBtn").addEventListener("click", undo);
+            document.getElementById("redoBtn").addEventListener("click", redo);
+
+            let currentColor = "red";
+            document.getElementById("colorPicker").addEventListener("change", (e) => {
+                currentColor = e.target.value;
+                canvas.freeDrawingBrush.color = currentColor;
+            });
+
+            //rajzolás engedélyezése
+            canvas.isDrawingMode = true
+            canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
+            canvas.freeDrawingBrush.width = 5;
+            canvas.freeDrawingBrush.color = currentColor;
+
+            const imageLoader = document.getElementById('imageLoader');
+            imageLoader.addEventListener('change', function (e) {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    fabric.Image.fromURL(event.target.result, function (img) {
+                        canvas.clear(); // minden előző tartalom törlése
+                        canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas), {
+                            scaleX: canvas.width / img.width,
+                            scaleY: canvas.height / img.height
+                        });
+                    }, { crossOrigin: 'anonymous' });
+                };
+                reader.readAsDataURL(e.target.files[0]);
+            });
+
+
+            saveState();
+
+            //Új kép mentése
+
+            function saveImage() {
+                return new Promise((resolve, reject) => {
+                    try {
+                        const dataURL = canvas.toDataURL("image/png");
+
+                        fetch('/api/feltoltes/saveimage', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ imageData: dataURL })
+                        })
+                            .then(async response => {
+                                if (!response.ok) {
+                                    // Válasz nem OK – olvassuk szövegként (pl. "Hiba: ...")
+                                    const text = await response.text();
+                                    throw new Error(text);
+                                }
+                                // Válasz rendben van, olvassuk JSON-ként
+                                return response.json();
+                            })
+                            .then(data => {
+                                // Siker – megjelenítjük az URL-t
+                                newImageUrlInput.value = data.url;
+                                console.log("Kép sikeresen feltöltve:", data.url);
+                                resolve();
+                            })
+                            .catch(err => {
+                                alert("Hiba történt a kép mentésekor:\n" + err.message);
+                                reject(err);
+                            });
+                    } catch (err) {
+                        console.error("Canvas export hiba:", err);
+                        reject(err);
+                    }
+                    
+                });
+            }
+
+            //régi kép törlése
+            function deleteOldImage() {
+                return new Promise(async (resolve, reject) => {
+                    const oldUrl = oldImageUrlInput.value;
+                    if(!oldUrl){
+                        resolve();
+                        return;
+                    }
+
+                    try {
+                        const url = new URL(oldUrl);
+                        const path = url.pathname;
+                        let filePath = decodeURIComponent(path.split('/o/')[1].split('?')[0]);
+                        const response = await fetch(`/api/Feltoltes/deleteimage?fileName=${encodeURIComponent(filePath)}`, {
+                            method: "DELETE"
+                        });
+                        if (response.ok) {
+                            console.log("Régi kép törölve:", filePath);
+                            resolve();
+                        } else {
+                            resolve();
+                        }
+
+                    } catch (err) {
+                        console.warn("Hiba a törlés közben, de folytatom a mentést:", err);
+                        resolve();
+                    }
+                });
+            }
+
+            //Form elküldés
+            document.getElementById("editForm").addEventListener("submit", async function (e) {
+                e.preventDefault();
+                try {
+                    const isCanvasModified = canvas.getObjects().length > 0;
+                    const oldUrl = oldImageUrlInput.value;
+
+                    // Ellenőrzi, hogy a háttérkép is módosult-e
+                    const isBackgroundModified = canvas.backgroundImage && canvas.backgroundImage.getSrc() !== oldUrl;
+
+                    if (isCanvasModified || canvas.backgroundImage) {
+                        if (oldUrl) {
+                            await deleteOldImage();
+                        }
+                        await saveImage();
+                    }
+
+                    // Végül küldje el a formot
+                    this.submit();
+                } catch (err) {
+                    console.log("Mentés megszakítva: ", err);
+                    alert("Nem sikerült a kép frissítése");
+                }
+            });
+        });
+    </script>
 }

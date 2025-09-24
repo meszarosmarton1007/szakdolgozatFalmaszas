@@ -4,13 +4,17 @@
     ViewData["Title"] = "Edit";
 }
 
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
+</head>
+
 <h1>Szerkesztés</h1>
 
 <h4>Falak</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" id="falEditForm">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="ID" />
             <div class="form-group">
@@ -19,9 +23,17 @@
                 <span asp-validation-for="nev" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input asp-for="kep" class="form-control" type="hidden"/>
+                <label asp-for="kep" class="control-label"></label>
+                <input asp-for="kep" class="form-control" type="hidden" id="newImgUrl"/>
+                <input id="oldImgUrl" type="hidden" value="@Model.kep" />
                 <span asp-validation-for="kep" class="text-danger"></span>
-                
+                <input type="file" id="imgLoader" accept="image/*" />
+                <br />
+                @if (!string.IsNullOrEmpty(Model.kep))
+                {
+                    <img src="@Model.kep" id="oldImage" style="max-width: 300;" />
+                }
+                <canvas id="canvas" width="800" height="600"></canvas>
             </div>
             <div class="form-group">
                 <label asp-for="letrehozva" class="control-label"></label>
@@ -51,5 +63,118 @@
 </div>
 
 @section Scripts {
+
+
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const canvas = new fabric.Canvas('canvas');
+            const imageLoader = document.getElementById('imgLoader');
+            const oldImageUrlInput = document.getElementById('oldImgUrl');
+            const newImageUrlInput = document.getElementById('newImgUrl');
+            const oldImageElement = document.getElementById('oldImage');
+
+            let isNewImageLoaded = false;
+
+            imageLoader.addEventListener('change', function (e) {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    fabric.Image.fromURL(event.target.result, function (img) {
+                        canvas.clear();
+                        canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas), {
+                            scaleX: canvas.width / img.width,
+                            scaleY: canvas.height / img.height
+                        });
+
+                        //Régi kép elrejése, ha van új kép
+                        if (oldImageElement) {
+                            oldImageElement.style.display = 'none';
+                        }
+                        isNewImageLoaded = true;
+                    });
+                };
+
+            reader.readAsDataURL(e.target.files[0]);
+        });
+
+            function saveImage() {
+                return new Promise((resolve, reject) => {
+                    const dataURL = canvas.toDataURL("image/png");
+
+                    fetch('/api/feltoltes/saveimage', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ imageData: dataURL })
+                    })
+                        .then(async response => {
+                            if (!response.ok) {
+                                const text = await response.text();
+                                throw new Error(text);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            newImageUrlInput.value = data.url;
+                            console.log("Kép sikeresen feltöltve:", data.url);
+                            resolve();
+                        })
+                        .catch(err => {
+                            alert("Hiba történt a kép mentésekor: " + err.message);
+                            reject(err);
+                        });
+
+                });
+            }
+
+            function deleteOldImage() {
+                return new Promise(async (resolve, reject) => {
+                    const oldUrl = oldImageUrlInput.value;
+                    if (!oldUrl) {
+                        resolve();
+                        return;
+                    }
+
+                    try {
+                        const url = new URL(oldUrl);
+                        const path = url.pathname;
+                        const fileName = decodeURIComponent(path.split('/').pop().split('?')[0]);
+
+                        const response = await fetch(`/api/Feltoltes/deleteimage?fileName=${encodeURIComponent(fileName)}`, {
+                            method: "DELETE"
+                        });
+
+                        // A törlési hiba nem állítja le a mentést, csak figyelmeztet
+                        if (response.ok) {
+                            console.log("Régi kép törölve:", oldUrl);
+                        } else {
+                            console.warn("Nem sikerült törölni a régi képet. A mentés folytatódik.");
+                        }
+                        resolve();
+
+                    } catch (err) {
+                        console.error("Váratlan hiba a régi kép törlése során:", err);
+                        resolve(); // A mentés folytatása
+                    }
+                });
+            }
+
+            document.getElementById("falEditForm").addEventListener("submit", async function (event) {
+                event.preventDefault();
+                try {
+                    if (isNewImageLoaded) {
+                        await deleteOldImage();
+                        await saveImage();
+                    }
+                    this.submit();
+                } catch (err) {
+                    console.error("Mentés megszakítva:", err);
+                    alert("Nem sikerült a fal frissítése");
+                }
+            });
+        });
+
+    </script>
 }

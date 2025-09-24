@@ -10,61 +10,37 @@
     <a asp-action="Create" class="btn btn-primary">Új felhasználó hozzáadása</a>
 </p>
 <table class="table">
-    <thead>
-        <tr>
-            <th>
-                Vezetéknév
-            </th>
-            <th>
-                Keresztnév
-            </th>
-            <th>
-                email
-            </th>
-            <th>
-                Jelszo
-            </th>
-            <th>
-                Születési idő
-            </th>
-            <th>
-                Telefonszám
-            </th>
-            <th>
-                rang
-            </th>
-            <th>
-                Felhasználónév
-            </th>
-        </tr>
-    </thead>
+
     <tbody>
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.vezetekNev)
+                    <p>
+                        <h5>Vezetéknév</h5> @Html.DisplayFor(modelItem => item.vezetekNev)
+                    </p>
+                    <p>
+                        <h5>Keresztnév</h5>  @Html.DisplayFor(modelItem => item.keresztNev)
+                    </p>
+                    <p>
+                        <h5>Email</h5> @Html.DisplayFor(modelItem => item.email)
+                    </p>
+                    <p>
+                        <h5>elszo</h5>Jelszo:  @Html.DisplayFor(modelItem => item.jelszo)
+                    </p>
+                <p>
+                    <h5>Születési idő</h5>Születési idő: @Html.DisplayFor(modelItem => item.szuletesiIdo)
+                </p>
+                <p>
+                    <h5>Telefonszám</h5>Telefonszám: @Html.DisplayFor(modelItem => item.telefonszam)
+                </p>
+                <p>
+                    <h5>Rang</h5>Rang: @Html.DisplayFor(modelItem => item.rang)
+                </p>
+                <p>
+                    <h5>Felhasználónév</h5>Felhasználónév: @Html.DisplayFor(modelItem => item.felhasznaloNev)
+                </p>
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.keresztNev)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.jelszo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.szuletesiIdo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.telefonszam)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.rang)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.felhasznaloNev)
-            </td>
+            
                 <td>
                 <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-warning">Szerkesztés</a> 
                 <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-info">Részletek</a> 
