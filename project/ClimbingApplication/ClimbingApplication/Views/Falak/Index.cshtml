@@ -4,7 +4,13 @@
     ViewData["Title"] = "Index";
     var falmaszohelyId = ViewData["FalmaszohelyID"];
 }
-
+<style>
+    /* Megakadályozza a vízszintes "ugrást" modal megnyitáskor */
+    body.modal-open {
+        padding-right: 0 !important;
+        overflow: auto !important;
+    }
+</style>
 
 
 @if(ViewBag.TeremNev != null)
@@ -28,53 +34,83 @@
     </p>
 }
 
-<table class="table">
-    <tbody>
-@foreach (var item in Model) {
-              
-        <tr>
-            <td>
-                    <p>
-                        <h3>@Html.DisplayFor(modelItem => item.nev)</h3> <a href="/FalmaszoHelyek/Utak/@item.ID" class="btn btn-lg"> A fal útjai</a>
-                    </p>
-                    <div class="d-flex align-items-start mt-3">
-                        <!--Bal oldali rész-->
-                        <div class="me-3">
-                            <img src="@Html.DisplayFor(modelItem => item.kep)" />
+<div class=" row justify-content-center">
+    <div>
+        @foreach (var item in Model)
+        {
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-md-center mb-3">
+                        <h3>@Html.DisplayFor(modelItem => item.nev)</h3>
+                        <a href="/FalmaszoHelyek/Utak/@item.ID" class="btn btn-lg"> A fal útjai</a>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <a href="#modal-@item.ID" data-bs-toggle="modal">
+                                <img src="@Html.DisplayFor(modelItem => item.kep)"
+                                     class="img-fluid rounded shadow-sm"
+                                     style="max-height: 250px; object-fit: cover; width:100%" />
+                            </a>
+
                         </div>
-                        <!--Jobb oldali eltolás-->
-                        <div>
-                            <p>
-                                <h5>Létrehozás napja</h5> @Html.DisplayFor(modelItem => item.letrehozva)
-                            </p>
-                            <p>
-                                <h5>Melyik teremben van</h5> @Html.DisplayFor(modelItem => item.Falhelye.nev)
-                            </p>
-                            <p>
-                                <h5>Létrehozó</h5> @Html.DisplayFor(modelItem => item.Letrehozo.felhasznaloNev)
-                            </p>
-                            <div class="d-flex align-items-center gap-2">
 
-                                <a asp-controller="Falak" asp-action="Details" asp-route-id="@item.ID" asp-route-falmaszohelyId="@ViewBag.FalmaszohelyId" class="btn btn-info">Részletek</a>
+                        <div class="col-md-8">
+                            <dl class="row">
+                                <dt class="col-sm-5">
+                                    Létrehozás napja
+                                </dt>
+                                <dd class="col-sm-7">
+                                    @Html.DisplayFor(modelItem => item.letrehozva)
+                                </dd>
+                                <dt class="col-sm-5">
+                                    Melyik teremben van
+                                </dt>
+                                <dd class="col-sm-7">
+                                    @Html.DisplayFor(modelItem => item.Falhelye.nev)
+                                </dd>
+                                <dt class="col-sm-5">
+                                    Létrehozó
+                                </dt>
+                                <dd class="col-sm-7">
+                                    @Html.DisplayFor(modelItem => item.Letrehozo.felhasznaloNev)
+                                </dd>
+                            </dl>
+                            <div class="mt-3">
+                                <div class="btn-group">
+                                    <a asp-controller="Falak" asp-action="Details" asp-route-id="@item.ID" asp-route-falmaszohelyId="@ViewBag.FalmaszohelyId" class="btn btn-info">Részletek</a>
 
 
 
-                                @if (User.Identity.IsAuthenticated && (item.FelhasznaloID == int.Parse(User.FindFirstValue("UserId")) || User.IsInRole("admin")))
-                                {
-                                    <a asp-controller="Falak" asp-action="Edit" asp-route-id="@item.ID" asp-route-falmaszohelyId="@ViewBag.FalmaszohelyId" class="btn btn-warning">Szerkesztés</a>
-                                    <a asp-controller="Falak" asp-action="Delete" asp-route-id="@item.ID" asp-route-falmaszohelyId="@ViewBag.FalmaszohelyId" class="btn btn-danger">Törlés</a>
-                                }
-
+                                    @if (User.Identity.IsAuthenticated && (item.FelhasznaloID == int.Parse(User.FindFirstValue("UserId")) || User.IsInRole("admin")))
+                                    {
+                                        <a asp-controller="Falak" asp-action="Edit" asp-route-id="@item.ID" asp-route-falmaszohelyId="@ViewBag.FalmaszohelyId" class="btn btn-warning">Szerkesztés</a>
+                                        <a asp-controller="Falak" asp-action="Delete" asp-route-id="@item.ID" asp-route-falmaszohelyId="@ViewBag.FalmaszohelyId" class="btn btn-danger">Törlés</a>
+                                    }
+                                </div>
                             </div>
                         </div>
-                        
                     </div>
-                    
-            </td>
-            
-                
-        </tr>
-    
-}
-    </tbody>
-</table>
+                </div>
+            </div>
+            @*--Molal ablak kódja--*@
+            <div class="modal" id="modal-@item.ID" tabindex="-1" aria-labelledby="imageModalLabel-@item.ID" aria-hidden="true">
+                <div class="modal-dialog modal-xl modal-dialog-centered">
+                    <div class="modal-content bg-transparent border-0">
+                        <div class="modal-header border-0 p-3" style="position: absolute; top: 0; right: 0; z-index: 1056;">
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="filter: drop-shadow(0 0 5px rgba(0,0,0,0.8));"></button>
+                        </div>
+                        <div class="modal-body p-0">
+                            <img src="@Html.DisplayFor(modelItem => item.kep)"
+                                 class="img-fluid"
+                                 style="height: auto; max-height:90vh; object-fit: contain; width:100%" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @*--Model ablak kód vége--*@
+        }
+        </<div>
+</div>
+ 
+       

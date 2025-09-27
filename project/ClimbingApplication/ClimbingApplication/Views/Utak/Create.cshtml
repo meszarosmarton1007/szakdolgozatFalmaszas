@@ -30,7 +30,7 @@
             <div class="form-group">
                 <canvas id="canvas" width="800" height="600"></canvas>
                 <label asp-for="kep" class="control-label"></label>
-                <input asp-for="kep" class="form-control" id="imageUrl" type="hidden"/> <!--ide érttékként beírni a feltöltött szerkesztet kép elérési útját-->
+                <input asp-for="kep" class="form-control" id="imageUrl" type="hidden"/>
                 <span asp-validation-for="kep" class="text-danger"></span>
                 <input type="file" id="imageLoader"  accept="image/*"/>
                 
@@ -86,25 +86,19 @@
     <a asp-controller="Utak" asp-action="Index" asp-route-falId="@ViewBag.FalId" class="btn btn-secondary">Vissza az utakhoz</a>
 </div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const canvas = new fabric.Canvas('canvas');
-        let drawing = false;
 
-        // Undo / Redo stack
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        // globális változók
+        let canvas;
         let stateStack = [];
         let redoStack = [];
         let isRestoringState = false;
 
-        function saveState() {
-            if (isRestoringState) return;
-            const json = canvas.toJSON();
-            stateStack.push(json);
-            // új művelet történt, redo stack törlődik
-            redoStack = [];
-        }
+        // globális fügvények
 
-        // Állapot visszatöltés
         function loadState(state) {
             isRestoringState = true;
             canvas.loadFromJSON(state, () => {
@@ -113,15 +107,28 @@
             });
         }
 
+        function saveState() {
+            if (isRestoringState || !canvas) return;
+            const json = JSON.stringify(canvas.toJSON());
+            stateStack.push(json);
+            redoStack = [];
+        }
+
         function undo() {
+            if (!canvas) return;
             if (stateStack.length > 1) {
                 redoStack.push(stateStack.pop());
                 const previousState = stateStack[stateStack.length - 1];
                 loadState(previousState);
+            } else if (stateStack.length === 1) {
+                redoStack.push(stateStack.pop());
+                canvas.clear();
+                canvas.setBackgroundImage(null, canvas.renderAll.bind(canvas));
             }
         }
 
         function redo() {
+            if (!canvas) return;
             if (redoStack.length > 0) {
                 const nextState = redoStack.pop();
                 stateStack.push(nextState);
@@ -129,111 +136,89 @@
             }
         }
 
-        document.getElementById("undoBtn").addEventListener("click", undo);
-        document.getElementById("redoBtn").addEventListener("click", redo);
+        // DOMContentLoaded eseménykezelő 
 
-        //Kép betöltése
-        document.getElementById('imageLoader').addEventListener('change', function (e) {
-            const reader = new FileReader();
-            reader.onload = function (event) {
-                fabric.Image.fromURL(event.target.result, function (img) {
-                    canvas.clear();
-                    canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas), {
-                        scaleX: canvas.width / img.width,
-                        scaleY: canvas.height / img.height
-                    });
+        document.addEventListener("DOMContentLoaded", () => {
+            canvas = new fabric.Canvas('canvas');
 
-                    // új háttér betöltés = új állapot
-                    saveState();
-                });
-            };
-            reader.readAsDataURL(e.target.files[0]);
-        });
+            function saveImage() {
+                return new Promise((resolve, reject) => {
+                    const dataURL = canvas.toDataURL("image/png");
 
-        //Rajzolás
-        canvas.on('path:created', function () {
-            saveState();
-        });
-
-        
-
-
-
-        // Betöltött kép hozzáadása
-        document.getElementById('imageLoader').addEventListener('change', function (e) {
-            const reader = new FileReader();
-            reader.onload = function (event) {
-                fabric.Image.fromURL(event.target.result, function (img) {
-                    canvas.clear();
-                    canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas), {
-                        scaleX: canvas.width / img.width,
-                        scaleY: canvas.height / img.height
-                    });
-                });
-            };
-            reader.readAsDataURL(e.target.files[0]);
-        });
-
-        // Szín kiválasztása
-        let currentColor = 'red';
-        document.getElementById('colorPicker').addEventListener('change', function (e) {
-            currentColor = e.target.value;
-            canvas.freeDrawingBrush.color = currentColor;
-        });
-
-        // Rajzolás bekapcsolása
-        canvas.isDrawingMode = true;
-        canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
-        canvas.freeDrawingBrush.width = 5;
-        canvas.freeDrawingBrush.color = currentColor;
-
-        // Kezdő állapot mentése
-        saveState();
-
-        // Kép mentése
-        function saveImage() {
-            return new Promise((resolve, reject) => {
-                const dataURL = canvas.toDataURL("image/png");
-
-                fetch('/api/feltoltes/saveimage', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ imageData: dataURL })
-                })
-                    .then(async response => {
-                        if (!response.ok) {
-                            // Válasz nem OK – olvassuk szövegként (pl. "Hiba: ...")
-                            const text = await response.text();
-                            throw new Error(text);
-                        }
-                        // Válasz rendben van, olvassuk JSON-ként
-                        return response.json();
+                    fetch('/api/feltoltes/saveimage', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ imageData: dataURL })
                     })
-                    .then(data => {
-                        // Siker – megjelenítjük az URL-t
-                        document.getElementById("imageUrl").value = data.url;
-                        console.log("Kép sikeresen feltöltve:", data.url);
-                        resolve();
-                    })
-                    .catch(err => {
-                        alert("Hiba történt a kép mentésekor:\n" + err.message);
-                        reject(err);
-                    });
+                        .then(async response => {
+                            if (!response.ok) {
+                                const text = await response.text();
+                                throw new Error(text);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            document.getElementById("imageUrl").value = data.url;
+                            resolve();
+                        })
+                        .catch(err => {
+                            alert("Hiba történt a kép mentésekor:\n" + err.message);
+                            reject(err);
+                        });
+                });
+            }
+
+            // Rajzolás után állapot mentése
+            canvas.on('path:created', function () {
+                saveState();
             });
-        }
 
+            // Kép betöltése
+            document.getElementById('imageLoader').addEventListener('change', function (e) {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    fabric.Image.fromURL(event.target.result, function (img) {
+                        canvas.clear();
+                        stateStack = [];
+                        redoStack = [];
+                        canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas), {
+                            scaleX: canvas.width / img.width,
+                            scaleY: canvas.height / img.height
+                        });
+                        saveState();
+                    }, { crossOrigin: 'anonymous' });
+                };
+                reader.readAsDataURL(e.target.files[0]);
+            });
+
+            // Szín kiválasztása
+            let currentColor = 'red';
+            document.getElementById('colorPicker').addEventListener('change', function (e) {
+                currentColor = e.target.value;
+                canvas.freeDrawingBrush.color = currentColor;
+            });
+
+            // Rajzolás bekapcsolása
+            canvas.isDrawingMode = true;
+            canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
+            canvas.freeDrawingBrush.width = 5;
+            canvas.freeDrawingBrush.color = currentColor;
+
+            // Kezdő állapot mentése
+            saveState();
+
+            // Form elküldés
             document.getElementById("falForm").addEventListener("submit", async function (event) {
                 event.preventDefault();
                 try {
-                    await saveImage();
+                    if (stateStack.length > 1 || canvas.backgroundImage) {
+                        await saveImage();
+                    }
                     this.submit();
                 } catch (err) {
-                    console.err("Mentés megszakítva:", err);
+                    console.error("Mentés megszakítva:", err);
                 }
             });
         });
-</script>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    </script>
 }
