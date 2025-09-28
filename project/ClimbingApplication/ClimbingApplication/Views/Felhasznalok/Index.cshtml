@@ -9,44 +9,76 @@
 <p>
     <a asp-action="Create" class="btn btn-primary">Új felhasználó hozzáadása</a>
 </p>
-<table class="table">
+<div class="row justify-content-center">
 
-    <tbody>
+    <div>
 @foreach (var item in Model) {
-        <tr>
-            <td>
-                    <p>
-                        <h5>Vezetéknév</h5> @Html.DisplayFor(modelItem => item.vezetekNev)
-                    </p>
-                    <p>
-                        <h5>Keresztnév</h5>  @Html.DisplayFor(modelItem => item.keresztNev)
-                    </p>
-                    <p>
-                        <h5>Email</h5> @Html.DisplayFor(modelItem => item.email)
-                    </p>
-                    <p>
-                        <h5>elszo</h5>Jelszo:  @Html.DisplayFor(modelItem => item.jelszo)
-                    </p>
-                <p>
-                    <h5>Születési idő</h5>Születési idő: @Html.DisplayFor(modelItem => item.szuletesiIdo)
-                </p>
-                <p>
-                    <h5>Telefonszám</h5>Telefonszám: @Html.DisplayFor(modelItem => item.telefonszam)
-                </p>
-                <p>
-                    <h5>Rang</h5>Rang: @Html.DisplayFor(modelItem => item.rang)
-                </p>
-                <p>
-                    <h5>Felhasználónév</h5>Felhasználónév: @Html.DisplayFor(modelItem => item.felhasznaloNev)
-                </p>
-            </td>
-            
-                <td>
-                <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-warning">Szerkesztés</a> 
-                <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-info">Részletek</a> 
-                <a asp-action="Delete" asp-route-id="@item.ID" class="btn btn-danger">Törlés</a>
-            </td>
-        </tr>
+
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <h3>@Html.DisplayFor(modelItem => item.felhasznaloNev)</h3>
+
+             <dl class="row mt-3">
+                        <dt class="col-sm-4">
+                            Vezetéknév
+                        </dt>
+                        <dd class="col-sm-8">
+                            @Html.DisplayFor(modelItem => item.vezetekNev)
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            Keresztnév
+                        </dt>
+                        <dd class="col-sm-8">
+                            @Html.DisplayFor(modelItem => item.keresztNev)
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            Email
+                        </dt>
+                        <dd class="col-sm-8">
+                            @Html.DisplayFor(modelItem => item.email)
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            Rang
+                        </dt>
+                        <dd class="col-sm-8">
+                            @Html.DisplayFor(modelItem => item.rang)
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            Születési idő
+                        </dt>
+                        <dd class="col-sm-8">
+                            @Html.DisplayFor(modelItem => item.szuletesiIdo)
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            Telefonszám
+                        </dt>
+                        <dd class="col-sm-8">
+                            @Html.DisplayFor(modelItem => item.telefonszam)
+                        </dd>
+                        
+                        <dt class="col-sm-4">
+                            Jelszó (Hash)
+                        </dt>
+                        <dd class="col-sm-8">
+                            ********
+                        </dd>
+                    </dl>
+                         <div class="mt-4">
+                            <div class="btn-group">
+                                <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-info">Részletek</a>
+                                <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-warning">Szerkesztés</a>
+                                <a asp-action="Delete" asp-route-id="@item.ID" class="btn btn-danger">Törlés</a>
+                            </div>
+                        </div>
+        </div>
+
+    </div>
+        
 }
-    </tbody>
-</table>
+    </div>
+</div>
