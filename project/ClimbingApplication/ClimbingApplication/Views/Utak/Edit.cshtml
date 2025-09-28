@@ -24,6 +24,7 @@
                     <option value="white">Fehér</option>
                     <option value="yellow">Sárga</option>
                     <option value="orange">Narancssárga</option>
+                    <option value="purple">Lila</option>
                 </select>
         <form asp-action="Edit" id="editForm">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -64,8 +65,7 @@
                <input class="form-control" value="@Model.Falonut?.nev" disabled />
             </div>
                 <div class="form-group">
-                    <label>Létrehozó</label>
-                    <input class="form-control" value="@Model.UtLetrehozo?.felhasznaloNev" disabled />
+                    <input class="form-control" value="@Model.UtLetrehozo?.felhasznaloNev" type="hidden" />
                 </div>
             <div class="form-group">
                 <input type="submit" value="Mentés" class="btn btn-primary" />
@@ -83,203 +83,217 @@
 
     <script>
         // --- GLOBÁLIS DEKLARÁCIÓK ---
-        // DEKLARÁLJUK a canvas-t és a stack-eket, hogy a globális függvények (undo/redo) elérjék.
-        let canvas; 
-        let stateStack = [];
-        let redoStack = [];
-        let isRestorngState = false;
-        const existingImageUrl = '@Html.Raw(Model.kep)'; 
+    let canvas; 
+    let stateStack = [];
+    let redoStack = [];
+    let isRestorngState = false;
+    const existingImageUrl = '@Html.Raw(Model.kep)'; 
+    // ÚJ: Flag a feltöltött kép jelzésére
+    let isNewImageLoaded = false; 
 
-        // --- GLOBÁLIS FÜGGVÉNYEK (A HTML onclick eléréséhez) ---
+    // --- GLOBÁLIS FÜGGVÉNYEK (A HTML onclick eléréséhez) ---
 
-        function loadState(state) {
-            isRestorngState = true;
-            // A loadFromJSON aszinkron, ezért kell a callback
-            canvas.loadFromJSON(state, () => {
-                canvas.renderAll();
-                isRestorngState = false;
-            });
+    function loadState(state) {
+        isRestorngState = true;
+        // A loadFromJSON aszinkron, ezért kell a callback
+        canvas.loadFromJSON(state, () => {
+            canvas.renderAll();
+            isRestorngState = false;
+        });
+    }
+    
+    function saveState() {
+        if (isRestorngState || !canvas) {
+            return;
         }
-        
-        function saveState() {
-            if (isRestorngState || !canvas) {
-                return;
-            }
-            // JSON.stringify() a deep copy miatt, hogy ne mutasson a verem a canvas aktuális állapotára
-            stateStack.push(JSON.stringify(canvas.toJSON())); 
-            redoStack = [];
-        }
+        // JSON.stringify() a deep copy miatt, hogy ne mutasson a verem a canvas aktuális állapotára
+        stateStack.push(JSON.stringify(canvas.toJSON())); 
+        redoStack = [];
+    }
 
-        // Visszavonás funkció (a HTML onclick hívja)
-        function undo() {
-            if (!canvas) return; // Védelmi ellenőrzés
-            if(stateStack.length > 1){
-                redoStack.push(stateStack.pop());
-                // Visszaállítjuk az UTOLSÓ ELŐTTI állapotot
-                loadState(stateStack[stateStack.length - 1]);
-            }
+    // Visszavonás funkció (a HTML onclick hívja)
+    function undo() {
+        if (!canvas) return; // Védelmi ellenőrzés
+        if(stateStack.length > 1){
+            redoStack.push(stateStack.pop());
+            // Visszaállítjuk az UTOLSÓ ELŐTTI állapotot
+            loadState(stateStack[stateStack.length - 1]);
         }
-        
-        // Visszaállítás funkció (a HTML onclick hívja)
-        function redo() {
-            if (!canvas) return; // Védelmi ellenőrzés
-            if (redoStack.length > 0) {
-                const nextState = redoStack.pop();
-                stateStack.push(nextState);
-                loadState(nextState);
-            }
+    }
+    
+    // Visszaállítás funkció (a HTML onclick hívja)
+    function redo() {
+        if (!canvas) return; // Védelmi ellenőrzés
+        if (redoStack.length > 0) {
+            const nextState = redoStack.pop();
+            stateStack.push(nextState);
+            loadState(nextState);
         }
-        
-        // Kép vászonra illesztése (segédfüggvény)
-        function setCanvasBackground(imageUrl) {
-            if (!imageUrl || !canvas) return;
+    }
+    
+    // Kép vászonra illesztése (segédfüggvény)
+    function setCanvasBackground(imageUrl) {
+        if (!imageUrl || !canvas) return;
 
-            fabric.Image.fromURL(imageUrl, function (img) {
-                canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas), {
-                    scaleX: canvas.width / img.width,
-                    scaleY: canvas.height / img.height
-                });
-                // Első állapot mentése a háttérkép beállítása után
-                saveState(); 
-            }, { crossOrigin: 'anonymous' });
-        }
-
-
-        // --- DOMContentLoaded ESEMÉNYKEZELŐ (A vászon inicializálása itt történik) ---
-        document.addEventListener("DOMContentLoaded", () => {
-            // 1. A VÁSZON INICIALIZÁLÁSA
-            canvas = new fabric.Canvas('canvas');
+        fabric.Image.fromURL(imageUrl, function (img) {
+            // Aránytartó skálázás
+            const ratioX = canvas.width/img.width;
+            const ratioY = canvas.height/img.height;
+            const ratio = Math.min(ratioX, ratioY);
             
-            const oldImageUrlInput = document.getElementById("oldImgUrl");
-            const newImageUrlInput = document.getElementById("imgUrl");
-
-            // 2. MEGLÉVŐ KÉP BETÖLTÉSE
-            if (existingImageUrl) {
-                setCanvasBackground(existingImageUrl);
-            } else {
-                // Ha nincs meglévő kép, a vászon üres állapotát mentjük kezdőállapotnak
-                saveState();
-            }
-
-            // 3. ESEMÉNYKEZELŐK
-            // Eseménykezelő a rajz befejezésére -> állapot mentése
-            canvas.on('path:created', (options) => {
-                saveState();
+            canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas), {
+                scaleX: ratio,
+                scaleY: ratio,
+                originX: 'center',
+                originY: 'center',
+                top: canvas.height/2,
+                left: canvas.width/2
             });
             
-            // ... a többi kód az eredeti Edit oldalból ...
+            // Első állapot mentése a háttérkép beállítása után
+            saveState(); 
+        }, { crossOrigin: 'anonymous' });
+    }
 
-            let currentColor = "red";
-            document.getElementById("colorPicker").addEventListener("change", (e) => {
-                currentColor = e.target.value;
-                canvas.freeDrawingBrush.color = currentColor;
-            });
 
-            //rajzolás engedélyezése
-            canvas.isDrawingMode = true
-            canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
-            canvas.freeDrawingBrush.width = 5;
+    // --- DOMContentLoaded ESEMÉNYKEZELŐ (A vászon inicializálása itt történik) ---
+    document.addEventListener("DOMContentLoaded", () => {
+        // 1. A VÁSZON INICIALIZÁLÁSA
+        canvas = new fabric.Canvas('canvas');
+        
+        const oldImageUrlInput = document.getElementById("oldImgUrl");
+        const newImageUrlInput = document.getElementById("imgUrl");
+
+        // 2. MEGLÉVŐ KÉP BETÖLTÉSE
+        if (existingImageUrl) {
+            setCanvasBackground(existingImageUrl);
+        } else {
+            // Ha nincs meglévő kép, a vászon üres állapotát mentjük kezdőállapotnak
+            saveState();
+        }
+
+        // 3. ESEMÉNYKEZELŐK
+        // Eseménykezelő a rajz befejezésére -> állapot mentése
+        canvas.on('path:created', (options) => {
+            saveState();
+        });
+        
+        let currentColor = "red";
+        document.getElementById("colorPicker").addEventListener("change", (e) => {
+            currentColor = e.target.value;
             canvas.freeDrawingBrush.color = currentColor;
+        });
 
-            const imageLoader = document.getElementById('imageLoader');
-            imageLoader.addEventListener('change', function (e) {
-                const reader = new FileReader();
-                reader.onload = function (event) {
-                    // ÚJ KÉP BETÖLTÉSEKOR TÖRLÖLJÜK A RÉGI TARTALMAT
-                    canvas.clear(); 
-                    stateStack = []; 
-                    redoStack = [];
-                    setCanvasBackground(event.target.result);
-                };
-                reader.readAsDataURL(e.target.files[0]);
-            });
+        //rajzolás engedélyezése
+        canvas.isDrawingMode = true
+        canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
+        canvas.freeDrawingBrush.width = 5;
+        canvas.freeDrawingBrush.color = currentColor;
+
+        const imageLoader = document.getElementById('imageLoader');
+        imageLoader.addEventListener('change', function (e) {
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                // ÚJ KÉP BETÖLTÉSEKOR TÖRLÖLJÜK A RÉGI TARTALMAT ÉS JELÖLJÜK A VÁLTOZÁST
+                canvas.clear(); 
+                stateStack = []; 
+                redoStack = [];
+                isNewImageLoaded = true; // <-- VÁLTOZÁS: Jelöljük, hogy a felhasználó új képet töltött fel
+                setCanvasBackground(event.target.result);
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        });
 
 
-            //Új kép mentése
-            function saveImage() {
-                return new Promise((resolve, reject) => {
-                    try {
-                        const dataURL = canvas.toDataURL("image/png");
-                        fetch('/api/feltoltes/saveimage', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ imageData: dataURL })
-                        })
-                            .then(async response => {
-                                if (!response.ok) {
-                                    const text = await response.text();
-                                    throw new Error(text);
-                                }
-                                return response.json();
-                            })
-                            .then(data => {
-                                newImageUrlInput.value = data.url;
-                                console.log("Kép sikeresen feltöltve:", data.url);
-                                resolve();
-                            })
-                            .catch(err => {
-                                alert("Hiba történt a kép mentésekor:\n" + err.message);
-                                reject(err);
-                            });
-                    } catch (err) {
-                        console.error("Canvas export hiba:", err);
-                        reject(err);
-                    }
-                });
-            }
-
-            //régi kép törlése
-            function deleteOldImage() {
-                return new Promise(async (resolve, reject) => {
-                    const oldUrl = oldImageUrlInput.value;
-                    if(!oldUrl){
-                        resolve();
-                        return;
-                    }
-
-                    try {
-                        const url = new URL(oldUrl);
-                        const path = url.pathname;
-                        let filePath = decodeURIComponent(path.split('/o/')[1].split('?')[0]);
-                        const response = await fetch(`/api/Feltoltes/deleteimage?fileName=${encodeURIComponent(filePath)}`, {
-                            method: "DELETE"
-                        });
-                        if (response.ok) {
-                            console.log("Régi kép törölve:", filePath);
-                            resolve();
-                        } else {
-                            resolve(); 
-                        }
-
-                    } catch (err) {
-                        console.warn("Hiba a törlés közben, de folytatom a mentést:", err);
-                        resolve();
-                    }
-                });
-            }
-
-            //Form elküldés
-            document.getElementById("editForm").addEventListener("submit", async function (e) {
-                e.preventDefault();
+        //Új kép mentése
+        function saveImage() {
+            return new Promise((resolve, reject) => {
                 try {
-                    // Ellenőrzi, hogy van-e rajz a vásznon (az első mentett állapoton felül)
-                    const isCanvasModified = stateStack.length > 1; 
-                    const oldUrl = oldImageUrlInput.value;
-
-                    if (isCanvasModified || canvas.backgroundImage) {
-                        if (oldUrl && isCanvasModified) {
-                            await deleteOldImage();
-                        }
-                        await saveImage();
-                    }
-
-                    // Végül küldje el a formot
-                    this.submit();
+                    const dataURL = canvas.toDataURL("image/png");
+                    fetch('/api/feltoltes/saveimage', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ imageData: dataURL })
+                    })
+                        .then(async response => {
+                            if (!response.ok) {
+                                const text = await response.text();
+                                throw new Error(text);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            newImageUrlInput.value = data.url;
+                            console.log("Kép sikeresen feltöltve:", data.url);
+                            resolve();
+                        })
+                        .catch(err => {
+                            alert("Hiba történt a kép mentésekor:\n" + err.message);
+                            reject(err);
+                        });
                 } catch (err) {
-                    console.log("Mentés megszakítva: ", err);
-                    alert("Nem sikerült a kép frissítése");
+                    console.error("Canvas export hiba:", err);
+                    reject(err);
                 }
             });
+        }
+
+        //régi kép törlése
+        function deleteOldImage() {
+            return new Promise(async (resolve, reject) => {
+                const oldUrl = oldImageUrlInput.value;
+                if(!oldUrl){
+                    resolve();
+                    return;
+                }
+
+                try {
+                    const url = new URL(oldUrl);
+                    const path = url.pathname;
+                    let filePath = decodeURIComponent(path.split('/o/')[1].split('?')[0]);
+                    const response = await fetch(`/api/Feltoltes/deleteimage?fileName=${encodeURIComponent(filePath)}`, {
+                        method: "DELETE"
+                    });
+                    if (response.ok) {
+                        console.log("Régi kép törölve:", filePath);
+                        resolve();
+                    } else {
+                        resolve(); 
+                    }
+
+                } catch (err) {
+                    console.warn("Hiba a törlés közben, de folytatom a mentést:", err);
+                    resolve();
+                }
+            });
+        }
+
+        //Form elküldés
+        document.getElementById("editForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
+            try {
+                // Ellenőrzi, hogy a vászon módosítva lett-e (több állapot a stackben, mint a kezdő)
+                const isCanvasModified = stateStack.length > 1; 
+                const oldUrl = oldImageUrlInput.value;
+                
+                // VÁLTOZÁS: Kép mentése csak akkor, ha rajzoltak rá VAGY új képet töltöttek fel
+                const shouldSaveImage = isCanvasModified || isNewImageLoaded;
+
+                if (shouldSaveImage) {
+                    // Ha volt régi URL, azt törölni kell, mert új mentés történik.
+                    if (oldUrl) {
+                        await deleteOldImage();
+                    }
+                    await saveImage();
+                }
+
+                // Végül küldje el a formot (ez viszi magával a többi adatot, pl. név, nehézség)
+                this.submit();
+            } catch (err) {
+                console.log("Mentés megszakítva: ", err);
+                alert("Nem sikerült a kép frissítése");
+            }
         });
+    });
     </script>
 }

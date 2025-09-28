@@ -26,6 +26,7 @@ namespace ClimbingApplication.Models
         public DateOnly szuletesiIdo { get; set; }
 
         [Required]
+        [RegularExpression(@"^(\+?[\d\s\-\(\)]{7,20})$", ErrorMessage = "A telefonszám formátuma érvénytelen. Kérjük, használjon számokat és szükség esetén + - ( ) karaktereket.")]
         public string telefonszam { get; set; }
 
         public string rang {  get; set; }
