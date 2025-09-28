@@ -52,38 +52,5 @@
 </div>
 
 @section Scripts{
-    <script>
-        const form = document.getElementById('deleteForm');
-        const imageUrlInput = document.getElementById('image-Url');
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const imageUrl = imageUrlInput.value;
-
-            const url = new URL(imageUrl);
-            const path = url.pathname;
-
-            const fileName = decodeURIComponent(path.split('/').pop().split('?')[0]);
-
-            try {
-                const response = await fetch(`/api/Feltoltes/deleteimage?fileName=${fileName}`, {
-                    method: 'delete'
-                });
-
-                if (response.ok) {
-                    console.log("Kép sikeresen törölve");
-                    e.target.submit();
-                } else {
-                    const error = await response.text();
-                    console.error("Hiba a kép törlésekor: ", error);
-                    alert("Hiba a kép törlésekor");
-                }
-
-            } catch (error) {
-                console.error("Váratlan hiba: ", error);
-                alert("Váratlan hiba");
-            }
-        });
-    </script>
+    
 }

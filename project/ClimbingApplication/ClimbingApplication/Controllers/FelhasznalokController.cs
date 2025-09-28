@@ -109,38 +109,6 @@ namespace ClimbingApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, FelhasznaloEdit model)
         {
-           /* if (_context.Felhasznalok.Any(f => f.felhasznaloNev == felhasznalok.felhasznaloNev && f.ID != felhasznalok.ID))
-            {
-                ModelState.AddModelError("felhasznalonev", "Ez a név már foglalt! Kérem adj meg egy másik felhasználónevet!");
-            }
-            
-            
-            if (id != felhasznalok.ID)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(felhasznalok);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!FelhasznalokExists(felhasznalok.ID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(felhasznalok);*/
 
             if(id != model.ID)
             {
@@ -202,10 +170,28 @@ namespace ClimbingApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            //1-es id felhasználó törlését nem engedjük
+            if(id == 1)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
             var felhasznalok = await _context.Felhasznalok.FindAsync(id);
             if (felhasznalok != null)
             {
-                _context.Felhasznalok.Remove(felhasznalok);
+                felhasznalok.vezetekNev = "Törölt";
+                felhasznalok.keresztNev = "Törölt";
+                felhasznalok.email = "torolt@torolt.com";
+                //Üres jelszó, hogy ne lehessen belépni
+                felhasznalok.jelszo = "";
+                felhasznalok.szuletesiIdo = new DateOnly(1990, 1, 1);
+                felhasznalok.telefonszam = "+3612345678910";
+                felhasznalok.rang = "user";
+                //Egyedi felhasználónév
+                felhasznalok.felhasznaloNev = "törölt_" + id;
+
+                //db frissítése, mivel nem történt valóditörlés
+                _context.Felhasznalok.Update(felhasznalok);
             }
 
             await _context.SaveChangesAsync();

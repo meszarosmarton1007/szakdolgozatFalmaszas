@@ -9,6 +9,8 @@ using ClimbingApplication.Context;
 using ClimbingApplication.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Google.Apis.Auth.OAuth2;
+using Google.Cloud.Storage.V1;
 
 namespace ClimbingApplication.Controllers
 {
@@ -240,8 +242,38 @@ namespace ClimbingApplication.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var utak = await _context.Utak.FindAsync(id);
+
             if (utak != null)
             {
+                if (!string.IsNullOrEmpty(utak.kep))
+                {
+                    try
+                    {
+                        var feltoltesCtrl = new FeltoltesController();
+                        var fileName = feltoltesCtrl.ExtracktFileNameFromUrl(utak.kep);
+
+                        if (!string.IsNullOrEmpty(fileName))
+                        {
+                            var bucketName = "rockclimbingapp";
+                            var credential = GoogleCredential.FromFile(@"D:\_szakdolgozatFalmaszas\szakdolgozatFalmaszas\project\firebase-adminsdk.json");
+                            var storage = StorageClient.Create(credential);
+
+                            await storage.DeleteObjectAsync(bucketName, fileName);
+                            Console.WriteLine("Sikeres törlés");
+                        }
+                    }
+                    catch (Google.GoogleApiException ex)
+                    {
+                        Console.WriteLine($"A kép nem létezik: {ex.Message}");
+                    }
+                    catch (Exception ex) 
+                    {
+                        Console.WriteLine($"Hiba a törlés során: {ex.Message}");
+                    }
+                }
+               
+
+
                 _context.Utak.Remove(utak);
             }
             

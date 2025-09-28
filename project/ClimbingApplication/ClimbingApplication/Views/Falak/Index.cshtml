@@ -34,7 +34,7 @@
     </p>
 }
 
-<div class=" row justify-content-center">
+<div class="row justify-content-center">
     <div>
         @foreach (var item in Model)
         {
@@ -46,16 +46,16 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-5">
                             <a href="#modal-@item.ID" data-bs-toggle="modal">
                                 <img src="@Html.DisplayFor(modelItem => item.kep)"
                                      class="img-fluid rounded shadow-sm"
-                                     style="max-height: 250px; object-fit: cover; width:100%" />
+                                     style="max-height: 250px; width: 100%; height: auto; display: block; cursor: pointer;" />
                             </a>
 
                         </div>
 
-                        <div class="col-md-8">
+                        <div class="col-md-7">
                             <dl class="row">
                                 <dt class="col-sm-5">
                                     Létrehozás napja
