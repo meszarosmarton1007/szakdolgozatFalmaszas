@@ -4,12 +4,14 @@ namespace ClimbingApplication.Models
 {
     public class LoginViewModel
     {
-        [Required]
+        [Required(ErrorMessage = "A mező kitöltése kötelező.")]
         [EmailAddress]
+        [Display(Name = "Email")]
         public string Email { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "A mező kitöltése kötelező.")]
         [DataType(DataType.Password)]
+        [Display(Name = "Jelszó")]
         public string Jelszo { get; set; }
     }
 }

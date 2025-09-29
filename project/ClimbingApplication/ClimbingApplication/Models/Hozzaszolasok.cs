@@ -8,16 +8,17 @@ namespace ClimbingApplication.Models
         [Key]
         public int ID { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "A mező kitöltése kötelező.")]
+        [Display(Name = "Hozzászólás")]
         public string hozzaszolas { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "A mező kitöltése kötelező.")]
         [ForeignKey("UtHozzaszolas")]
         public int UtakID { get; set; }
 
         public virtual Utak? UtHozzaszolas { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "A mező kitöltése kötelező.")]
         [ForeignKey("UtHozzaszolo")]
         public int FelhasznaloID { get; set; }
 

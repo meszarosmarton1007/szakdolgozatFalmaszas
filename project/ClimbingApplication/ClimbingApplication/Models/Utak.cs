@@ -8,29 +8,34 @@ namespace ClimbingApplication.Models
         [Key]
         public int ID { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "A mező kitöltése kötelező.")]
+        [Display(Name = "Kép")]
         public string kep { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "A mező kitöltése kötelező.")]
+        [Display(Name = "Nehézség")]
         public string nehezseg { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "A mező kitöltése kötelező.")]
+        [Display(Name = "A fal neve")]
         public string nev { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "A mező kitöltése kötelező.")]
+        [Display(Name = "Leírás a falról")]
         public string leiras { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "A mező kitöltése kötelező.")]
+        [Display(Name = "Érvényesség kezdete")]
         public DateOnly letrehozva { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "A mező kitöltése kötelező.")]
         [ForeignKey("Falonut")]
         public int FalID { get; set; }
 
         public virtual Falak? Falonut {  get; set; }
 
         //létehozó
-        [Required]
+        [Required(ErrorMessage = "A mező kitöltése kötelező.")]
         [ForeignKey("UtLetrehozo")]
         public int FelhasznaloID { get; set; }
 
