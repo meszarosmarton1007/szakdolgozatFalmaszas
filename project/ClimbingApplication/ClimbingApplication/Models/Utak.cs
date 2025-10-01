@@ -17,11 +17,11 @@ namespace ClimbingApplication.Models
         public string nehezseg { get; set; }
 
         [Required(ErrorMessage = "A mező kitöltése kötelező.")]
-        [Display(Name = "A fal neve")]
+        [Display(Name = "A út neve")]
         public string nev { get; set; }
 
         [Required(ErrorMessage = "A mező kitöltése kötelező.")]
-        [Display(Name = "Leírás a falról")]
+        [Display(Name = "Leírás az útról")]
         public string leiras { get; set; }
 
         [Required(ErrorMessage = "A mező kitöltése kötelező.")]
