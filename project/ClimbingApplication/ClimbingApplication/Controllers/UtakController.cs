@@ -39,22 +39,16 @@ namespace ClimbingApplication.Controllers
         
             eFContextcs = eFContextcs.Where(u => u.FalID == falId);
                 
-
             var fal = await _context.Falak.Include(f => f.Falhelye).AsNoTracking().FirstOrDefaultAsync(f => f.ID == falId);
             if (fal == null)
             {
                  return NotFound();
             }
                 
-
-
             ViewBag.FalmaszohelyId = fal.Falhelye.ID;//id hozzá lett írva
             ViewBag.FalId = falId;
             ViewBag.FalNev = fal.nev;
             ViewBag.FalmaszohelyNev = fal.Falhelye.nev;
-
-
-            
 
             return View(await eFContextcs.ToListAsync());
             
@@ -85,22 +79,6 @@ namespace ClimbingApplication.Controllers
         [HttpGet("Utak/Create/{falId?}")]
         public IActionResult Create(int falId)
         {
-            /*  if (falId.HasValue)
-              {
-                  //ViewData["FalID"] = new SelectList(_context.Falak, "ID", "nev", falId.Value);
-                  //ViewBag.FalId = falId.Value;
-                  //var fal = _context.Falak.FirstOrDefault(f => f.ID == falId.Value);
-                  if (falId.HasValue)
-                  {
-                      //ViewBag.FalNev = fal.nev;
-                      ViewBag.FalId = falId.Value;
-                  }
-
-              }
-              else
-              {
-                  ViewData["FalID"] = new SelectList(_context.Falak, "ID", "nev");
-              }*/
             var ut = new Utak
             {
                 FalID = falId,
@@ -136,7 +114,6 @@ namespace ClimbingApplication.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index", new {falId});
             }
-            // ViewData["FalID"] = new SelectList(_context.Falak, "ID", "nev", utak.FalID);
             ViewBag.FalId = falId;
             return View(utak);
         }
@@ -158,7 +135,6 @@ namespace ClimbingApplication.Controllers
             {
                 return NotFound();
             }
-            //ViewData["FalID"] = new SelectList(_context.Falak, "ID", "nev", utak.FalID);
            ViewBag.FalId = utak.FalID;
             return View(utak);
         }
@@ -210,7 +186,6 @@ namespace ClimbingApplication.Controllers
                 }
                 
             }
-            //ViewData["FalID"] = new SelectList(_context.Falak, "ID", "nev", utak.FalID);
             ViewBag.FalID = utak.FalID;
             return View(utak);
         }
@@ -237,6 +212,7 @@ namespace ClimbingApplication.Controllers
         }
 
         // POST: Utak/Delete/5
+        //Torlési logika a képekre, hogy először a kép törlődjön
         [HttpPost("Utak/Delete/{id}"), ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

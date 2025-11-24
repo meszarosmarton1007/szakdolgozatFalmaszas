@@ -45,6 +45,11 @@
                 <select asp-for="FelhasznalokID" class="form-control" asp-items="ViewBag.FelhasznalokID"></select>
                 <span asp-validation-for="FelhasznalokID" class="text-danger"></span>
                 }
+                else
+                {
+                    <!-- Rejtett mező, hogy az ID megmaradjon -->
+                    <input type="hidden" asp-for="FelhasznalokID" />
+                }
                 
             </div>
             <div class="form-group">

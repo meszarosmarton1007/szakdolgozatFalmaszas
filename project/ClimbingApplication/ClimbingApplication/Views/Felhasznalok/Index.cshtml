@@ -7,8 +7,12 @@
 <h1>Index</h1>
 
 <p>
+    @if (User.Identity.IsAuthenticated && (User.IsInRole("admin")))
+                                    {
     <a asp-action="Create" class="btn btn-primary">Új felhasználó hozzáadása</a>
+                                    }
 </p>
+
 <div class="row justify-content-center">
 
     <div>
@@ -68,6 +72,8 @@
                             ********
                         </dd>
                     </dl>
+                @if (User.Identity.IsAuthenticated && User.IsInRole("admin"))
+                {
                          <div class="mt-4">
                             <div class="btn-group">
                                 <a asp-action="Details" asp-route-id="@item.ID" class="btn btn-info">Részletek</a>
@@ -75,6 +81,7 @@
                                 <a asp-action="Delete" asp-route-id="@item.ID" class="btn btn-danger">Törlés</a>
                             </div>
                         </div>
+                }
         </div>
 
     </div>

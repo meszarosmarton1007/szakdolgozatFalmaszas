@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Identity;
 
 namespace ClimbingApplication.Controllers
 {
+    //ez az ostaly csak az admin altal a felhasznalon vegzett muveleteket hajtja vegre. A Rgisztracio, bejelentekezs, kijelentekes, jelszomodositas az AccountControllerben van
+
     public class FelhasznalokController : Controller
     {
         private readonly EFContextcs _context;
@@ -53,6 +55,7 @@ namespace ClimbingApplication.Controllers
         // POST: Felhasznalok/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //Admin altal torteno felhasznalohozzaadas
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,vezetekNev,keresztNev,email,jelszo,szuletesiIdo,telefonszam,rang,felhasznaloNev")] Felhasznalok felhasznalok)
@@ -72,6 +75,7 @@ namespace ClimbingApplication.Controllers
         }
 
         // GET: Felhasznalok/Edit/5
+        //Admin altal torteno felhasznalo szerkesztes
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -105,6 +109,7 @@ namespace ClimbingApplication.Controllers
         // POST: Felhasznalok/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //Admin altal torteno felhasznalo szerkesztes
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, FelhasznaloEdit model)
@@ -148,6 +153,7 @@ namespace ClimbingApplication.Controllers
         }
 
         // GET: Felhasznalok/Delete/5
+        //Admin altal torteno felhasznalo torles
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -166,6 +172,7 @@ namespace ClimbingApplication.Controllers
         }
 
         // POST: Felhasznalok/Delete/5
+        //Felhasznalo torlesi szabalyok, nincs torles, csak frissites
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

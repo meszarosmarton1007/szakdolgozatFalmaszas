@@ -68,8 +68,6 @@ namespace ClimbingApplication.Controllers
         // GET: Falak/Create
         public IActionResult Create(int falmaszohelyId)
         {
-            //ViewData["FalmaszohelyID"] = new SelectList(_context.FalmaszoHelyek, "ID", "cim");
-            //return View();
 
             var fal = new Falak
             {
@@ -104,7 +102,6 @@ namespace ClimbingApplication.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index), new {falmaszohelyId = falak.FalmaszohelyID});
             }
-            //ViewData["FalmaszohelyID"] = new SelectList(_context.FalmaszoHelyek, "ID", "cim", falak.FalmaszohelyID);
             ViewBag.FalmaszohelyId = falmaszohelyId;
             return View(falak);
         }
@@ -126,7 +123,6 @@ namespace ClimbingApplication.Controllers
                 return NotFound();
             }
             ViewBag.Falhelye = falmaszohelyId ?? falak.FalmaszohelyID;
-            //ViewData["FalmaszohelyID"] = new SelectList(_context.FalmaszoHelyek, "ID", "cim", falak.FalmaszohelyID);
             return View(falak);
         }
 
@@ -173,7 +169,6 @@ namespace ClimbingApplication.Controllers
                 }
                 return RedirectToAction(nameof(Index), new { falmaszohelyId = falak.FalmaszohelyID });
             }
-            //ViewData["FalmaszohelyID"] = new SelectList(_context.FalmaszoHelyek, "ID", "cim", falak.FalmaszohelyID);
             ViewBag.FalmaszohelyId = falmaszohelyId ?? falak.FalmaszohelyID;
             return View(falak);
         }
@@ -203,6 +198,7 @@ namespace ClimbingApplication.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var falak = await _context.Falak.FindAsync(id);
+            //Kep torlesi logika
             if (falak != null)
             {
                 if (!string.IsNullOrEmpty(falak.kep))

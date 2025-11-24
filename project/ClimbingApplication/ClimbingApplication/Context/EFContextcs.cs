@@ -27,6 +27,7 @@ namespace ClimbingApplication.Context
         {
             base.OnModelCreating(modelBuilder);
 
+            //Cascade torlose lokika megvalositasa
             modelBuilder.Entity<Felhasznalok>()
                 .HasIndex(f => f.felhasznaloNev)
                 .IsUnique();

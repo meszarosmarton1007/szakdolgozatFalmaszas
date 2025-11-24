@@ -23,7 +23,7 @@ namespace ClimbingApplication.Controllers
         {
             return View();
         }
-
+        //Bejelentekzes megvalositasa
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
@@ -45,11 +45,11 @@ namespace ClimbingApplication.Controllers
 
             bool isHased = user.jelszo.StartsWith("AQAA"); //Tipikus hash-elt jelszó fejléc nem része a jelszónak
 
-            if (isHased) 
+            if (isHased)
             {
                 //Hashelt jelszó ellenőrzése
                 var res = haser.VerifyHashedPassword(user, user.jelszo, model.Jelszo);
-                if(res != PasswordVerificationResult.Success)
+                if (res != PasswordVerificationResult.Success)
                 {
                     ModelState.AddModelError("jelszo", "Hibás email vagy jelszó");
                     return View(model);
@@ -58,7 +58,7 @@ namespace ClimbingApplication.Controllers
             else
             {
                 //Régi jelszavak hashelése
-                if(user.jelszo != model.Jelszo)
+                if (user.jelszo != model.Jelszo)
                 {
                     ModelState.AddModelError("jelszo", "Hibás email vagy jelszó");
                     return View(model);
@@ -90,11 +90,12 @@ namespace ClimbingApplication.Controllers
         {
             return View();
         }
-
+        //Regisztracio megvalositasa
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterView model)
         {
+            //Datum ellenorzese, hogy nem-e jovobeli
             if (model.SzuletesiIdo > DateOnly.FromDateTime(DateTime.Today))
             {
                 ModelState.AddModelError("SzuletesiIdo", "A születési idő nem lehet jövőbeli");
@@ -112,7 +113,7 @@ namespace ClimbingApplication.Controllers
                 ModelState.AddModelError("Email", "Ezzel az emil-lel már reisztráltak");
                 return View(model);
             }
-
+            //felahsználónév ellenőrzése
             if (await _context.Felhasznalok.AnyAsync(f => f.felhasznaloNev == model.FelhasznaloNev))
             {
                 ModelState.AddModelError("FelhasznaloNev", "Ez a felhasználónév már foglalt kérjük válasz egy másikat");
@@ -140,7 +141,7 @@ namespace ClimbingApplication.Controllers
 
             //claimsek létrehozása azaz bejelentkezés
             var claims = new List<Claim>
-            { 
+            {
                 new Claim (ClaimTypes.Name, model.FelhasznaloNev),
                 new Claim("UserId", user.ID.ToString()),
                 new Claim(ClaimTypes.Role, user.rang)
@@ -169,7 +170,7 @@ namespace ClimbingApplication.Controllers
         {
             return View();
         }
-
+        //Jelszovaltoztatas
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(ChangePasswordView model)
@@ -178,7 +179,7 @@ namespace ClimbingApplication.Controllers
             {
                 return View(model);
             }
-
+            //felhasznalo ellenozese
             var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
             if (userId == null)
             {
@@ -206,7 +207,7 @@ namespace ClimbingApplication.Controllers
 
             //Új jelszó beállítása
             user.jelszo = hasher.HashPassword(user, model.UjJelszo);
-            _context.Update(User);
+            _context.Felhasznalok.Update(user);
             await _context.SaveChangesAsync();
 
             TempData["Message"] = "Sikeres jelszómódosítás";
@@ -214,6 +215,8 @@ namespace ClimbingApplication.Controllers
             return RedirectToAction("Index", "Home");
 
         }
+
+        //Kijelentkezes
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
@@ -221,10 +224,6 @@ namespace ClimbingApplication.Controllers
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Index", "Home");
         }
-        /*
-        public IActionResult AccesDenied() 
-        {
-            return View(); 
-        }*/
+
     }
 }
