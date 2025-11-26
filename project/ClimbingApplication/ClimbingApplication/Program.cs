@@ -1,4 +1,7 @@
 using ClimbingApplication.Context;
+using ClimbingApplication.Service;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,7 +19,18 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.AccessDeniedPath = "/Account/Accesdenied";
     });
 
+//Firebase útvonalak bégetésének megszüntetése
+var firebaseConfig = builder.Configuration.GetSection("Firebase");
+string seviceAccountPath = firebaseConfig["ServiceAccountPath"];
+string storageBucket = firebaseConfig["StorageBucket"];
 
+FirebaseApp.Create(new AppOptions()
+{
+    Credential = GoogleCredential.FromFile(seviceAccountPath)
+});
+
+//Képek törlése a controllereknél
+builder.Services.AddScoped<IImageService, FirebaseImageService>();
 
 var app = builder.Build();
 

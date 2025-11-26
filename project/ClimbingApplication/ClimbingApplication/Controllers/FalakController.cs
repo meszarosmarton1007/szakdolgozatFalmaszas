@@ -10,16 +10,22 @@ using ClimbingApplication.Models;
 using System.Security.Claims;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Storage.V1;
+using System.Configuration;
+using ClimbingApplication.Service;
 
 namespace ClimbingApplication.Controllers
 {
     public class FalakController : Controller
     {
         private readonly EFContextcs _context;
+        private readonly IImageService _imageService;
+        private readonly IConfiguration _configuration;
 
-        public FalakController(EFContextcs context)
+        public FalakController(EFContextcs context, IImageService imageService, IConfiguration configuration)
         {
             _context = context;
+            _imageService = imageService;
+            _configuration = configuration;
         }
 
         // GET: Falak
@@ -199,24 +205,13 @@ namespace ClimbingApplication.Controllers
         {
             var falak = await _context.Falak.FindAsync(id);
             //Kep torlesi logika
-            if (falak != null)
+           if (falak != null)
             {
                 if (!string.IsNullOrEmpty(falak.kep))
                 {
                     try
                     {
-                        var feltoltesCtrl = new FeltoltesController();
-                        var fileName = feltoltesCtrl.ExtracktFileNameFromUrl(falak.kep);
-
-                        if (!string.IsNullOrEmpty(fileName))
-                        {
-                            var bucketName = "rockclimbingapp";
-                            var credential = GoogleCredential.FromFile(@"D:\_szakdolgozatFalmaszas\szakdolgozatFalmaszas\project\firebase-adminsdk.json");
-                            var storage = StorageClient.Create(credential);
-
-                            await storage.DeleteObjectAsync(bucketName, fileName);
-                            Console.WriteLine("Sikeres törlés");
-                        }
+                      await _imageService.DeleteImageAsync(falak.kep);
                     }
                     catch (Google.GoogleApiException ex)
                     {

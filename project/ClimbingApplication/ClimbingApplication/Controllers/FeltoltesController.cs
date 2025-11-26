@@ -10,11 +10,23 @@ namespace ClimbingApplication.Controllers
     [Route("api/[controller]")]
     public class FeltoltesController : ControllerBase
     {
+        private readonly string _bucket;
+        private readonly string _credentialPath;
+
+        public FeltoltesController(IConfiguration configuration)
+        {
+            _bucket = configuration["Firebase:StorageBucket"];
+            _credentialPath = configuration["Firebase:ServiceAccountPath"];
+        }
+
+
 
         public class ImageUploadModel
         {
             public string ImageData { get; set; }
         }
+
+        //Kép feltöltése
         [HttpPost("saveimage")]
         public async Task<IActionResult> SaveImage([FromBody] ImageUploadModel model)
         {
@@ -26,19 +38,14 @@ namespace ClimbingApplication.Controllers
                 // Fájlnév generálása
                 var fileName = $"{Guid.NewGuid()}.png";
 
-                // Bucket neve
-                var bucketName = "rockclimbingapp";
+                var storage = StorageClient.Create(GoogleCredential.FromFile(_credentialPath));
 
-                // Firebase Storage inicializálása
-                var credential = GoogleCredential.FromFile(@"D:\_szakdolgozatFalmaszas\szakdolgozatFalmaszas\project\firebase-adminsdk.json");
-                var storage = StorageClient.Create(credential);
+                using var stream = new MemoryStream(imageBytes);
+                
+                await storage.UploadObjectAsync(bucket: _bucket, objectName: fileName, contentType: "image/png", source: stream);
+                
 
-                using (var stream = new MemoryStream(imageBytes))
-                {
-                    await storage.UploadObjectAsync(bucketName, fileName, "image/png", stream);
-                }
-
-                var publicUrl = $"https://firebasestorage.googleapis.com/v0/b/{bucketName}/o/{Uri.EscapeDataString(fileName)}?alt=media";
+                var publicUrl = $"https://firebasestorage.googleapis.com/v0/b/{_bucket}/o/{Uri.EscapeDataString(fileName)}?alt=media";
 
                 return Ok(new { url = publicUrl });
 
@@ -49,6 +56,7 @@ namespace ClimbingApplication.Controllers
             }
         }
 
+        //Kép törlése
         [HttpDelete("deleteimage")]
         public async Task<IActionResult> DeleteImage([FromQuery] string fileName)
         {
@@ -59,13 +67,9 @@ namespace ClimbingApplication.Controllers
 
             try
             {
-                var bucketName = "rockclimbingapp";
+                var storage = StorageClient.Create(GoogleCredential.FromFile(_credentialPath));
 
-                // Firebase Storage inicializálása
-                var credential = GoogleCredential.FromFile(@"D:\_szakdolgozatFalmaszas\szakdolgozatFalmaszas\project\firebase-adminsdk.json");
-                var storage = StorageClient.Create(credential);
-
-                await storage.DeleteObjectAsync(bucketName, fileName);
+                await storage.DeleteObjectAsync(_bucket, fileName);
 
                 return Ok("A kép sikeresen törölve");
 
