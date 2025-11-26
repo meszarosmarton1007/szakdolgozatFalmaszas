@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using ClimbingApplication.Context;
 using ClimbingApplication.Models;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ClimbingApplication.Controllers
 {
@@ -21,6 +22,7 @@ namespace ClimbingApplication.Controllers
         }
 
         // GET: Valaszok
+        [Authorize(Roles = "senki")]
         public async Task<IActionResult> Index()
         {
             var eFContextcs = _context.Valaszok.Include(v => v.Valasz).Include(v => v.Valasziro);
@@ -48,6 +50,7 @@ namespace ClimbingApplication.Controllers
         }
 
         // GET: Valaszok/Create
+        [Authorize(Roles = "senki")]
         public IActionResult Create()
         {
             ViewData["HozzaszolasID"] = new SelectList(_context.Hozzaszolasok, "ID", "hozzaszolas");
@@ -60,6 +63,7 @@ namespace ClimbingApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "senki")]
         public async Task<IActionResult> Create([Bind("ID,valasz,HozzaszolasID,FelhasznaloID")] Valaszok valaszok)
         {
             if (ModelState.IsValid)
@@ -159,6 +163,7 @@ namespace ClimbingApplication.Controllers
         }
 
         // GET: Valaszok/Edit/5
+        [Authorize(Roles = "senki")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -181,6 +186,7 @@ namespace ClimbingApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "senki")]
         public async Task<IActionResult> Edit(int id, [Bind("ID,valasz,HozzaszolasID,FelhasznaloID")] Valaszok valaszok)
         {
             if (id != valaszok.ID)
@@ -214,6 +220,7 @@ namespace ClimbingApplication.Controllers
         }
 
         // GET: Valaszok/Delete/5
+        [Authorize(Roles = "senki")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

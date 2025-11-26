@@ -1,8 +1,11 @@
-﻿@{
+﻿@*Views/Account/Accesdenied.cshtml*@
+@{
     ViewData["Title"] = "Hozzáférés megtagadva";
 }
-
+<div class="alert alert-danger" role="alert">
 <h2>Hozzáférés megtagadva</h2>
 <p>Nincs jogosultságod az oldal megtekintéséhez.</p>
+<p>Kérjük, ellenőrizze bejelentkezési státuszát, vagy lépjen kapcsolatba a rendszergazdával.</p>
+</div>
 
 <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Vissza a főoldalra</a>

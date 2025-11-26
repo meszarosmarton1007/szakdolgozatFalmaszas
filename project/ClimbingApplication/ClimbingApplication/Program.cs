@@ -14,7 +14,7 @@ builder.Services.AddDbContext<EFContextcs>();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/Account/Login";
+        options.LoginPath = "/Account/Accesdenied";
         options.LogoutPath = "/Account/Logout";
         options.AccessDeniedPath = "/Account/Accesdenied";
     });

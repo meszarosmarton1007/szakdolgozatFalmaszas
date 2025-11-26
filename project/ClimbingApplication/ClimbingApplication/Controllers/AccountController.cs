@@ -225,5 +225,11 @@ namespace ClimbingApplication.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+
+        [HttpGet]
+        public IActionResult Accesdenied()
+        {
+            return View();
+        }
     }
 }

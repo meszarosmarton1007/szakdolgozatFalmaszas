@@ -8,11 +8,13 @@ using Microsoft.EntityFrameworkCore;
 using ClimbingApplication.Context;
 using ClimbingApplication.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ClimbingApplication.Controllers
 {
     //ez az ostaly csak az admin altal a felhasznalon vegzett muveleteket hajtja vegre. A Rgisztracio, bejelentekezs, kijelentekes, jelszomodositas az AccountControllerben van
 
+    [Authorize(Roles = "admin")]
     public class FelhasznalokController : Controller
     {
         private readonly EFContextcs _context;
