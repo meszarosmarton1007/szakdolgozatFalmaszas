@@ -82,6 +82,7 @@ namespace ClimbingApplication.Controllers
 
         // GET: Utak/Create
         [HttpGet("Utak/Create/{falId?}")]
+        [Authorize]
         public IActionResult Create(int falId)
         {
             var ut = new Utak
@@ -98,6 +99,7 @@ namespace ClimbingApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost("Utak/Create/{falId}")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Create([Bind("ID,kep,nehezseg,nev,leiras,letrehozva,FalID")] Utak utak, int? falId)
         {
             if (ModelState.IsValid)
@@ -125,6 +127,7 @@ namespace ClimbingApplication.Controllers
 
         // GET: Utak/Edit/5
         [HttpGet("Utak/Edit/{id}")]
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -149,6 +152,7 @@ namespace ClimbingApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost("Utak/Edit/{id}")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Edit(int id, [Bind("ID,kep,nehezseg,nev,leiras,letrehozva,FalID")] Utak utak)
         {
             if (id != utak.ID)
@@ -197,6 +201,7 @@ namespace ClimbingApplication.Controllers
 
         // GET: Utak/Delete/5
         [HttpGet("Utak/Delete/{id}")]
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -223,6 +228,7 @@ namespace ClimbingApplication.Controllers
         //Torlési logika a képekre, hogy először a kép törlődjön
         [HttpPost("Utak/Delete/{id}"), ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var utak = await _context.Utak.FindAsync(id);

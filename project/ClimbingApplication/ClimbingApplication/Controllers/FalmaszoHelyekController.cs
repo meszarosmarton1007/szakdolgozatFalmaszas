@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using ClimbingApplication.Context;
 using ClimbingApplication.Models;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ClimbingApplication.Controllers
 {
@@ -67,6 +68,7 @@ namespace ClimbingApplication.Controllers
         }
 
         // GET: FalmaszoHelyek/Create
+        [Authorize]
         public IActionResult Create()
         {
             ViewData["FelhasznalokID"] = new SelectList(_context.Felhasznalok, "ID", "email");
@@ -78,6 +80,7 @@ namespace ClimbingApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Create([Bind("ID,orszag,cim,honlap,nev,leiras,FelhasznalokID")] FalmaszoHelyek falmaszoHelyek)
         {
             if (ModelState.IsValid)
@@ -100,6 +103,7 @@ namespace ClimbingApplication.Controllers
         }
 
         // GET: FalmaszoHelyek/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -121,6 +125,7 @@ namespace ClimbingApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Edit(int id, [Bind("ID,orszag,cim,honlap,nev,leiras,FelhasznalokID")] FalmaszoHelyek falmaszoHelyek)
         {
             if (id != falmaszoHelyek.ID)
@@ -153,6 +158,7 @@ namespace ClimbingApplication.Controllers
         }
 
         // GET: FalmaszoHelyek/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -174,6 +180,7 @@ namespace ClimbingApplication.Controllers
         // POST: FalmaszoHelyek/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var falmaszoHelyek = await _context.FalmaszoHelyek.FindAsync(id);

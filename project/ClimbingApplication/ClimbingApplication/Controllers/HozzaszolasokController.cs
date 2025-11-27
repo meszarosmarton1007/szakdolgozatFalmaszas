@@ -217,7 +217,7 @@ namespace ClimbingApplication.Controllers
         }
 
         // GET: Hozzaszolasok/Delete/5
-        [Authorize(Roles = "senki")]
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -240,7 +240,7 @@ namespace ClimbingApplication.Controllers
         // POST: Hozzaszolasok/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "senki")]
+        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var hozzaszolasok = await _context.Hozzaszolasok.FindAsync(id);

@@ -12,6 +12,7 @@ using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Storage.V1;
 using System.Configuration;
 using ClimbingApplication.Service;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ClimbingApplication.Controllers
 {
@@ -72,6 +73,7 @@ namespace ClimbingApplication.Controllers
         }
 
         // GET: Falak/Create
+        [Authorize]
         public IActionResult Create(int falmaszohelyId)
         {
 
@@ -90,6 +92,7 @@ namespace ClimbingApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Create([Bind("ID,nev,kep,letrehozva,FalmaszohelyID")] Falak falak, int falmaszohelyId)
         {
             if (ModelState.IsValid)
@@ -113,6 +116,7 @@ namespace ClimbingApplication.Controllers
         }
 
         // GET: Falak/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id, int? falmaszohelyId)
         {
             if (id == null)
@@ -137,6 +141,7 @@ namespace ClimbingApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Edit(int id, [Bind("ID,nev,kep,letrehozva,FalmaszohelyID")] Falak falak, int? falmaszohelyId)
         {
             if (id != falak.ID)
@@ -180,6 +185,7 @@ namespace ClimbingApplication.Controllers
         }
 
         // GET: Falak/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -201,6 +207,7 @@ namespace ClimbingApplication.Controllers
         // POST: Falak/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var falak = await _context.Falak.FindAsync(id);
