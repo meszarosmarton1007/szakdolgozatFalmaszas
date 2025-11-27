@@ -221,9 +221,6 @@ namespace ClimbingApplication.Controllers
             return View(utak);
         }
 
-       
-
-
         // POST: Utak/Delete/5
         //Torlési logika a képekre, hogy először a kép törlődjön
         [HttpPost("Utak/Delete/{id}"), ActionName("Delete")]
@@ -250,8 +247,6 @@ namespace ClimbingApplication.Controllers
                         Console.WriteLine($"Hiba a törlés során: {ex.Message}");
                     }
                 }
-               
-
 
                 _context.Utak.Remove(utak);
             }

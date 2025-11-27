@@ -19,8 +19,6 @@ namespace ClimbingApplication.Controllers
             _credentialPath = configuration["Firebase:ServiceAccountPath"];
         }
 
-
-
         public class ImageUploadModel
         {
             public string ImageData { get; set; }
@@ -44,7 +42,6 @@ namespace ClimbingApplication.Controllers
                 
                 await storage.UploadObjectAsync(bucket: _bucket, objectName: fileName, contentType: "image/png", source: stream);
                 
-
                 var publicUrl = $"https://firebasestorage.googleapis.com/v0/b/{_bucket}/o/{Uri.EscapeDataString(fileName)}?alt=media";
 
                 return Ok(new { url = publicUrl });
