@@ -57,7 +57,7 @@ namespace ClimbingApplication.Controllers
             }
             else
             {
-                //Régi jelszavak hashelése
+                //Régi jelszavak hashelése erre a részre már nem fut ki a program, mert már minden jelszó hashelt formában van tárolva
                 if (user.jelszo != model.Jelszo)
                 {
                     ModelState.AddModelError("jelszo", "Hibás email vagy jelszó");
