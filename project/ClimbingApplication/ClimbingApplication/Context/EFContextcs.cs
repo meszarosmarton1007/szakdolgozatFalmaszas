@@ -36,51 +36,44 @@ namespace ClimbingApplication.Context
             modelBuilder.Entity<FalmaszoHelyek>()
                .HasOne(f => f.Hozzaado)
                .WithMany()
-               .HasForeignKey(f => f.FelhasznalokID)
-               .OnDelete(DeleteBehavior.SetNull);
-
-            modelBuilder.Entity<FalmaszoHelyek>()
-                .HasOne(f => f.Hozzaado)
-                .WithMany()
-                .HasForeignKey(f => f.FelhasznalokID)
-                .OnDelete(DeleteBehavior.Restrict);
+               .HasForeignKey(f => f.FelhasznalokID);
 
             modelBuilder.Entity<Falak>()
                 .HasOne(f => f.Letrehozo)
                 .WithMany()
                 .HasForeignKey(f => f.FelhasznaloID)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Utak>()
                 .HasOne(u => u.UtLetrehozo)
                 .WithMany()
                 .HasForeignKey(u => u.FelhasznaloID)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Hozzaszolasok>()
                 .HasOne(h => h.UtHozzaszolo)
                 .WithMany()
                 .HasForeignKey(h => h.FelhasznaloID)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Valaszok>()
                 .HasOne(v => v.Valasziro)
                 .WithMany()
                 .HasForeignKey(v => v.FelhasznaloID)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.NoAction);
 
 
             modelBuilder.Entity<Falak>()
                .HasOne(f => f.Falhelye)
                .WithMany(fh => fh.Falak)
                .HasForeignKey(f => f.FalmaszohelyID)
-               .OnDelete(DeleteBehavior.Cascade);
+               .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Utak>()
                 .HasOne(u => u.Falonut)
-                .WithMany()
+                .WithMany(f => f.Utak)
                 .HasForeignKey(u => u.FalID)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Hozzaszolasok>()
                 .HasOne(h => h.UtHozzaszolas)

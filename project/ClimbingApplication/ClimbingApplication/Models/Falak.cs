@@ -32,5 +32,7 @@ namespace ClimbingApplication.Models
         public int FelhasznaloID { get; set; }
 
         public virtual Felhasznalok? Letrehozo { get; set; }
+
+        public virtual ICollection<Utak> Utak { get; set; } = new List<Utak>();
     }
 }

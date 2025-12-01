@@ -210,10 +210,41 @@ namespace ClimbingApplication.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var falak = await _context.Falak.FindAsync(id);
+            var falak = await _context.Falak
+                .Include(f => f.Utak)
+                .ThenInclude(u => u.Hozzaszolasoks)
+                .ThenInclude(h => h.Valaszok)
+                .FirstOrDefaultAsync(f => f.ID == id);
+
+            if (falak == null)
+            {
+                return NotFound();
+            }
+               
             //Kep torlesi logika
            if (falak != null)
             {
+                foreach (var ut in falak.Utak)
+                {
+                    //utak kép törlése
+                    if (!string.IsNullOrEmpty(ut.kep))
+                    {
+                        await _imageService.DeleteImageAsync(ut.kep);
+                    }
+                    //valaszok törlése
+                    foreach (var hozz in ut.Hozzaszolasoks)
+                    {
+                        _context.Valaszok.RemoveRange(hozz.Valaszok);
+                    }
+                    //hoizzaszolas törlése
+
+                    _context.Hozzaszolasok.RemoveRange(ut.Hozzaszolasoks);
+
+                }
+
+                _context.RemoveRange(falak.Utak);
+
+                //falak kép törlése
                 if (!string.IsNullOrEmpty(falak.kep))
                 {
                     try

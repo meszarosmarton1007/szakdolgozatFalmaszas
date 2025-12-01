@@ -3,6 +3,7 @@ using System;
 using ClimbingApplication.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClimbingApplication.Migrations
 {
     [DbContext(typeof(EFContextcs))]
-    partial class EFContextcsModelSnapshot : ModelSnapshot
+    [Migration("20251201140101_cascade_torles_frissites")]
+    partial class cascade_torles_frissites
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.3");
@@ -225,13 +228,13 @@ namespace ClimbingApplication.Migrations
                     b.HasOne("ClimbingApplication.Models.FalmaszoHelyek", "Falhelye")
                         .WithMany("Falak")
                         .HasForeignKey("FalmaszohelyID")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ClimbingApplication.Models.Felhasznalok", "Letrehozo")
                         .WithMany()
                         .HasForeignKey("FelhasznaloID")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Falhelye");
@@ -244,7 +247,7 @@ namespace ClimbingApplication.Migrations
                     b.HasOne("ClimbingApplication.Models.Felhasznalok", "Hozzaado")
                         .WithMany()
                         .HasForeignKey("FelhasznalokID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Hozzaado");
@@ -255,7 +258,7 @@ namespace ClimbingApplication.Migrations
                     b.HasOne("ClimbingApplication.Models.Felhasznalok", "UtHozzaszolo")
                         .WithMany()
                         .HasForeignKey("FelhasznaloID")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ClimbingApplication.Models.Utak", "UtHozzaszolas")
@@ -274,13 +277,13 @@ namespace ClimbingApplication.Migrations
                     b.HasOne("ClimbingApplication.Models.Falak", "Falonut")
                         .WithMany("Utak")
                         .HasForeignKey("FalID")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ClimbingApplication.Models.Felhasznalok", "UtLetrehozo")
                         .WithMany()
                         .HasForeignKey("FelhasznaloID")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Falonut");
@@ -293,7 +296,7 @@ namespace ClimbingApplication.Migrations
                     b.HasOne("ClimbingApplication.Models.Felhasznalok", "Valasziro")
                         .WithMany()
                         .HasForeignKey("FelhasznaloID")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ClimbingApplication.Models.Hozzaszolasok", "Valasz")
