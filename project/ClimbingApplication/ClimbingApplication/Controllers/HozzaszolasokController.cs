@@ -84,6 +84,16 @@ namespace ClimbingApplication.Controllers
         public async Task<IActionResult> myCreate(int utakId, string hozzaszolas)
         {
             var userId = int.Parse(User.FindFirstValue("UserId"));
+
+            var falId = await _context.Utak
+               .Where(u => u.ID == utakId)
+               .Select(u => u.FalID)
+               .FirstOrDefaultAsync();
+
+            if (hozzaszolas == null)
+            {
+                return RedirectToAction("Index", "Utak", new { falId });
+            }
             var newComment = new Hozzaszolasok
             {
                 UtakID = utakId,
@@ -93,11 +103,6 @@ namespace ClimbingApplication.Controllers
 
             _context.Add(newComment);
             await _context.SaveChangesAsync();
-
-            var falId = await _context.Utak
-                .Where(u => u.ID == utakId)
-                .Select(u => u.FalID)
-                .FirstOrDefaultAsync();
 
             return RedirectToAction("Index", "Utak", new {falId});
         }
