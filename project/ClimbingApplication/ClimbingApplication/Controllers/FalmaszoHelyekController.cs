@@ -9,18 +9,23 @@ using ClimbingApplication.Context;
 using ClimbingApplication.Models;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using ClimbingApplication.Service;
+using System.Configuration;
 
 namespace ClimbingApplication.Controllers
 {
     public class FalmaszoHelyekController : Controller
     {
         private readonly EFContextcs _context;
+        private readonly IImageService _imageService;
+        private readonly IConfiguration _configuration;
 
-        
 
-        public FalmaszoHelyekController(EFContextcs context)
+        public FalmaszoHelyekController(EFContextcs context, IImageService imageService, IConfiguration configuration)
         {
             _context = context;
+            _imageService = imageService;
+            _configuration = configuration;
         }
         
         public async Task<IActionResult> Falak(int falmaszohelyId)
@@ -183,11 +188,68 @@ namespace ClimbingApplication.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var falmaszoHelyek = await _context.FalmaszoHelyek.FindAsync(id);
-            if (falmaszoHelyek != null)
+            var falmaszoHelyek = await _context.FalmaszoHelyek
+                .Include(h => h.Falak)
+                .ThenInclude(f => f.Utak)
+                .ThenInclude(u => u.Hozzaszolasoks)
+                .ThenInclude(h => h.Valaszok)
+                .FirstOrDefaultAsync(h => h.ID == id);
+            if (falmaszoHelyek == null)
             {
-                _context.FalmaszoHelyek.Remove(falmaszoHelyek);
+                return NotFound();
             }
+            //Falak manuális törlése
+            foreach (var fal in falmaszoHelyek.Falak)
+            {
+                //utak törlése
+                foreach (var utak in fal.Utak)
+                {
+                    //hozzászólások törlése
+                    foreach (var hozz in utak.Hozzaszolasoks)
+                    {
+                        _context.Valaszok.RemoveRange(hozz.Valaszok);
+                    }
+                    _context.Hozzaszolasok.RemoveRange(utak.Hozzaszolasoks);
+
+                    //ut kép törlés
+                    if(!string.IsNullOrEmpty(utak.kep))
+                    {
+                        try
+                        {
+                            await _imageService.DeleteImageAsync(utak.kep);
+                        }
+                        catch (Google.GoogleApiException ex)
+                        {
+                            Console.WriteLine($"A kép nem létezik: {ex.Message}");
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Hiba a törlés során: {ex.Message}");
+                        }
+                    }
+                }
+                _context.Utak.RemoveRange(fal.Utak);
+
+                //falak kép törlése
+                if (!string.IsNullOrEmpty(fal.kep))
+                {
+                    try
+                    {
+                        await _imageService.DeleteImageAsync(fal.kep);
+                    }
+                    catch (Google.GoogleApiException ex)
+                    {
+                        Console.WriteLine($"A kép nem létezik: {ex.Message}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Hiba a törlés során: {ex.Message}");
+                    }
+                }
+            }
+            _context.Falak.RemoveRange(falmaszoHelyek.Falak);
+
+            _context.FalmaszoHelyek.Remove(falmaszoHelyek);
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
