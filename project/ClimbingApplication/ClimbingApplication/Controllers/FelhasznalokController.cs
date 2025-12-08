@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ClimbingApplication.Controllers
 {
-    //ez az ostaly csak az admin altal a felhasznalon vegzett muveleteket hajtja vegre. A Rgisztracio, bejelentekezs, kijelentekes, jelszomodositas az AccountControllerben van
+    //ez az osztály csak az admin által a felhasználón végzett műveleteket hajtja végre. A Regisztráció, bejelentkezés, kijelentkezés, jelszómódositás az AccountControllerben van
 
     [Authorize(Roles = "admin")]
     public class FelhasznalokController : Controller

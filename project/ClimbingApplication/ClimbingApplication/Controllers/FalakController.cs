@@ -229,7 +229,18 @@ namespace ClimbingApplication.Controllers
                     //utak kép törlése
                     if (!string.IsNullOrEmpty(ut.kep))
                     {
-                        await _imageService.DeleteImageAsync(ut.kep);
+                        try
+                        {
+                            await _imageService.DeleteImageAsync(ut.kep);
+                        }
+                        catch (Google.GoogleApiException ex)
+                        {
+                            Console.WriteLine($"A kép nem létezik: {ex.Message}");
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Hiba a törlés során: {ex.Message}");
+                        }
                     }
                     //valaszok törlése
                     foreach (var hozz in ut.Hozzaszolasoks)

@@ -20,7 +20,7 @@ namespace ClimbingApplication.Service
             }
 
         }
-
+        //fájl név kinyerése az url-ből
         public string ExtractFileNameFromUrl(string url)
         {
             if (string.IsNullOrEmpty(url))
@@ -36,6 +36,7 @@ namespace ClimbingApplication.Service
             return fileName;
         }
 
+        //Kép törlése firebase-ból
         public async Task DeleteImageAsync(string imageUrl)
         {
             var fileName = ExtractFileNameFromUrl(imageUrl);
