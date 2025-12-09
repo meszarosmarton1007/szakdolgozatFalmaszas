@@ -63,6 +63,7 @@ namespace ClimbingApplication.Controllers
 
             var falak = await _context.Falak
                 .Include(f => f.Falhelye)
+                .Include(f => f.Letrehozo)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (falak == null)
             {
