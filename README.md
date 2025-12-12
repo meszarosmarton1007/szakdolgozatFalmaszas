@@ -66,14 +66,10 @@ firebase-adminsdk.json
 ### A könyvtárstruktúra így fog kinézni:
 
 /Controllers
-
 /Models
-
 /Views
-
 /SecureKeys (ha nem létezik létre kell hozni)
-
-    └── firebase-adminsdk.json
+	└── firebase-adminsdk.json
 
 
 Miért van erre szükség?
