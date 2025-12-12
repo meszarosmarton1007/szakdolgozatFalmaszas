@@ -1,13 +1,87 @@
-Ez a program a szakdolgozatomhoz kapcsolódó projekt. Téma: falmaászókat segítő webalkalmazás.
+# Rock Climbing Web Application – ASP.NET Core
 
-A program C# ASP.NET valamint html,css és javascript nyelveket használja.
-
-A programot Visual Studio 2022- ben írom.
-
-Futtatni a Visual Studio 2022- ben ajánlom ahol a .sln file betöltése után lehet futtatni;
-
-másik lehetőség parancsorból: a projekt mappában a dotner run paranccsal (célszerű elötte kiadni a dotnet clean parancsot az esetleg benne maradt korábbi futtatási fájlok törlése véget)
+Ez a projekt a szakdolgozatom részeként készült egy falmászókat segítő webalkalmazás formájában.  
+A rendszer célja, hogy a felhasználók falmászó helyeket, falakat, útvonalakat, hozzászólásokat és képeket tudjanak kezelni.
 
 
+## Technológiák
 
-A progam futtatásához szükség van még egy google firebase stoegere, ezt a firebase-én meg lehet csinálmi. Az ottani utasitásokat követően létre kell hozni egy projektet vagy egy meglévőhöz csatolni, majd egy storage bucketet "rockclimbingapp" néven létre kell hozni. Ezek után egy service account private key-re lesz szükség. Ez egy .json fájl, ezt le kell tölteni és a "SecureKeys" mappába (létre kell hozni), ami a projektben a többi mappával egy helyen(pl.: Controller, Model). Ezt a fájlt "firebase-adminsdk.json" néven kell elmenteni, mert a program csak így fogja tudni megtalálni. Erre azért van szükség, hogy a képfeltöltés is működjön mindenkinél, mivel a progam csak lokálisan futtatható és a .json fájl publikálása nagy biztonági kockázatot jelent, emiatt van szükség arra, hogy a tárhelyet mindenki saját magának hozza létre.
+- **C# – ASP.NET Core MVC**
+- **Entity Framework Core – SQLite adatbázis**
+- **HTML, CSS, JavaScript**
+- **Firebase Storage – képfeltöltéshez**
+- **Visual Studio 2022 ajánlott fejlesztőkörnyezet**
+
+
+## A projekt futtatása
+
+### **1. Visual Studio 2022-ből**
+1. Nyisd meg a megoldást (`.sln` file)
+2. Válaszd ki a fő projektet indítási projektként
+3. Kattints a *Run* (▶) gombra
+
+### **2. Futtatás parancssorból**
+A projekt gyökérmappájában:
+
+```sh
+dotnet clean
+dotnet run
+```
+
+
+
+A projekt képfeltöltési funkciója Google Firebase Storage használatára épül.
+Mivel a privát kulcsokat biztonsági okokból nem lehet a repository-ban tárolni, minden felhasználónak saját Firebase-projektet kell beállítania.
+
+## 1. Firebase projekt létrehozása
+
+1. Lépj a Firebase konzolra:
+ https://console.firebase.google.com
+
+2. Hozz létre egy új projektet, vagy válassz ki egy meglévőt.
+
+3. A bal oldali menüben válaszd a Storage menüpontot.
+
+4. Hozz létre egy Storage Bucketet — ajánlott elnevezés:
+rockclimbingapp
+
+## 2. Service Account kulcs létrehozása
+
+1. Navigálj ide: Project Settings → Service Accounts
+
+2. Válaszd a Generate new private key opciót.
+
+3. Töltsd le a generált .json fájlt.
+
+## 3. A kulcs elhelyezése a projektben
+
+1. A projekt gyökérkönyvtárában hozz létre egy mappát:
+SecureKeys
+
+2. Másold ide a letöltött JSON fájlt.
+
+3. Fontos: a fájlt pontosan ezen a néven kell elmenteni, hogy az alkalmazás megtalálja:
+firebase-adminsdk.json
+
+### A könyvtárstruktúra így fog kinézni:
+
+/Controllers
+
+/Models
+
+/Views
+
+/SecureKeys
+
+    └── firebase-adminsdk.json
+
+
+Miért van erre szükség?
+
+A Firebase privát kulcsok bizalmas adatot tartalmaznak → nem kerülhetnek fel GitHub-ra.
+
+Az alkalmazás csak így tud hitelesítetten kapcsolódni a Storage-hoz.
+
+A projekt lokálisan futtatható, ezért mindenkinek saját Firebase Storage példányt kell kezelnie.
+
+Ha ez a lépés kimarad, a képfeltöltés nem fog működni.
