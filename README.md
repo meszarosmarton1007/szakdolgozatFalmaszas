@@ -16,7 +16,7 @@ A rendszer célja, hogy a felhasználók falmászó helyeket, falakat, útvonala
 ## A projekt futtatása
 
 ### **1. Visual Studio 2022-ből**
-1. Nyisd meg a megoldást (`.sln` file)
+1. Nyisd meg a solution-t (`.sln` file)
 2. Válaszd ki a fő projektet indítási projektként
 3. Kattints a *Run* (▶) gombra
 
@@ -71,7 +71,7 @@ firebase-adminsdk.json
 
 /Views
 
-/SecureKeys
+/SecureKeys (ha nem létezik létre kell hozni)
 
     └── firebase-adminsdk.json
 
