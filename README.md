@@ -65,15 +65,14 @@ firebase-adminsdk.json
 
 ### A könyvtárstruktúra így fog kinézni:
 
+```markdown
 /Controllers
-
 /Models
-
 /Views
-
 /SecureKeys (ha nem létezik létre kell hozni)
-
 	└── firebase-adminsdk.json
+/...
+```
 
 
 Miért van erre szükség?
